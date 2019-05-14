@@ -1,4 +1,4 @@
-dist/bundle*
+dist/bundle.min.js.map
 .idea/
 
 # Logs
