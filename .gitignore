@@ -1,3 +1,6 @@
+dist/bundle*
+.idea/
+
 # Logs
 logs
 *.log
