@@ -1,3 +1,42 @@
 #app {
   font-family: sans-serif;
 }
+
+.matrix__table {
+  border-spacing: 0;
+}
+
+.matrix__table-wrapper {
+  width: 100%;
+  overflow: scroll;
+  height: 35em;
+}
+
+.matrix__table-cell {
+  border: solid 1px gray;
+  height: 5em;
+  width: 10em;
+  max-width: 10em;
+  overflow-wrap: break-word;
+  text-align: center;
+}
+
+.matrix__table-lh-column-cell {
+  position: sticky;
+  left: 0;
+  background: white;
+  font-weight: bold;
+  border-right: solid 2px gray;
+}
+
+.matrix__table-header-cell {
+  position: sticky;
+  top: 0;
+  background: white;
+  font-weight: bold;
+  border-bottom: solid 2px gray
+}
+
+.matrix__table-lh-column-cell.matrix__table-header-cell {
+  z-index: 1;
+}

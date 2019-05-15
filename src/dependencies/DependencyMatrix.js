@@ -22,30 +22,32 @@ const mapStateToDependencyCellProps = (state, { artifactId, dependencyId }) => a
 )
 
 const renderDependencyCell = ({ scope, version }) => version
-  ? <td>{version} ({scope})</td>
-  : <td></td>
+  ? <td class="matrix__table-cell">{version} ({scope})</td>
+  : <td class="matrix__table-cell"></td>
 
 const DependencyCell = connect(mapStateToDependencyCellProps)(renderDependencyCell)
 
 const DependencyMatrix = ({ ids, versions, dependencyIds }) => (
-  <table>
-    <thead>
-      <tr>
-        <td></td>
-        {ids.map(id => (
-          <td>{id} - {versions[id]}</td>
-        ))}
-      </tr>
-    </thead>
-    <tbody>
-      {dependencyIds.map(dependencyId => (
+  <div class="matrix__table-wrapper">
+    <table class="matrix__table">
+      <thead>
         <tr>
-          <td>{dependencyId}</td>
-          {ids.map(id => <DependencyCell artifactId={id} dependencyId={dependencyId}/>)}
+          <td class="matrix__table-cell matrix__table-lh-column-cell matrix__table-header-cell"></td>
+          {ids.map(id => (
+            <td class="matrix__table-cell matrix__table-header-cell">{id} - {versions[id]}</td>
+          ))}
         </tr>
-      ))}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {dependencyIds.map(dependencyId => (
+          <tr>
+            <td class="matrix__table-cell matrix__table-lh-column-cell">{dependencyId}</td>
+            {ids.map(id => <DependencyCell artifactId={id} dependencyId={dependencyId}/>)}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
 )
 
 export default connect(mapStateToProps)(DependencyMatrix)
