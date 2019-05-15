@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "jest .*Test.js"
   },
   "author": "https://github.com/crosslandwa",
   "license": "ISC",

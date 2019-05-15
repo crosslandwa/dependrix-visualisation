@@ -1,13 +1,14 @@
 import createStore from '../../store'
 import { hasTreeLoadBeenAttempted, hasTreeLoadedSuccessfully, loadTree } from '../interactions'
 import { makeGETRequest as mockGETRequest } from '../../make-request'
+import { clearModelFromDom, injectModelIntoDom, model } from './helpers'
 
 jest.mock('../../make-request')
 
 describe('Tree loading', () => {
   beforeEach(() => {
     mockGETRequest.mockImplementation(() => Promise.reject(new Error('(mock) GET request failed')))
-    document.getElementsByTagName('html')[0].innerHTML = ''
+    clearModelFromDom()
   })
 
   it('initialises with no tree loaded', () => {
@@ -19,7 +20,7 @@ describe('Tree loading', () => {
   it('reports successful tree loading when model is in the DOM', done => {
     const store = createStore()
 
-    document.body.innerHTML = '<script id="modelled-dependencies">{"artifacts":{}, "dependencies":{}}</script>'
+    injectModelIntoDom(model())
 
     store.dispatch(loadTree())
       .then(() => {

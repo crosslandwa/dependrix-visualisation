@@ -6,12 +6,22 @@ const apply = (x, f) => f(x)
 export const loadTree = () => ({ type: 'LOAD_TREE' })
 const treeLoadedSuccessfully = data => ({ type: 'TREE_LOAD_SUCCESS', data })
 const treeLoadFailed = () => ({ type: 'TREE_LOAD_FAILED' })
+export const updateArtifactFilter = (search) => ({
+  type: 'UPDATE_ARTIFACT_FILTER',
+  search: sanitiseSearch(search)
+})
+export const updateDependencyFilter = (search) => ({
+  type: 'UPDATE_DEPENDENCY_FILTER',
+  search: sanitiseSearch(search)
+})
+
+const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim()).filter(x => x)
 
 // ------ SELECTORS ------
 export const hasTreeLoadBeenAttempted = state => !!state.tree.loadStatus
 export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'success'
 
-export const artifactIds = state => Object.keys(state.artifacts)
+export const artifactIds = state => filterBySearchTerms(Object.keys(state.artifacts), state.filters.artifacts)
 export const artifactVersion = (state, id) => state.artifacts[id].version
 export const artifactDependencyVersion = (state, id, dependencyId) => apply(
   state.artifacts[id].dependencies[dependencyId],
@@ -21,7 +31,11 @@ export const artifactDependencyScope = (state, id, dependencyId) => apply(
   state.artifacts[id].dependencies[dependencyId],
   dep => (dep && dep.scope) || ''
 )
-export const dependencyIds = state => Object.keys(state.dependencies)
+export const dependencyIds = state => filterBySearchTerms(Object.keys(state.dependencies), state.filters.dependencies)
+
+const filterBySearchTerms = (ids, search) => search.length
+  ? ids.filter(id => search.some(term => id.toLowerCase().includes(term)))
+  : ids
 
 // ------ REDUCERS ------
 export const treeLoadReducer = (state = { loadStatus: false }, action) => {
@@ -46,6 +60,16 @@ export const dependenciesReducer = (state = {}, action) => {
   switch (action.type) {
     case 'TREE_LOAD_SUCCESS':
       return action.data.dependencies
+  }
+  return state
+}
+
+export const filtersReducer = (state = { artifacts: [], dependencies: [] }, action) => {
+  switch (action.type) {
+    case 'UPDATE_ARTIFACT_FILTER':
+      return { ...state, artifacts: action.search }
+    case 'UPDATE_DEPENDENCY_FILTER':
+      return { ...state, dependencies: action.search }
   }
   return state
 }
