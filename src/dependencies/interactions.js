@@ -1,3 +1,5 @@
+import { makeGETRequest } from '../make-request'
+
 const apply = (x, f) => f(x)
 
 // ------ ACTIONS ------
@@ -39,6 +41,7 @@ export function treeLoadMiddleware (store) {
             ? resolve(JSON.parse(element.innerHTML))
             : reject(new Error('Could not find modelled-dependencies in DOM'))
         ))
+          .catch(e => makeGETRequest('modelled-dependencies.json').then(JSON.parse)) // load from server if not in DOM
           .then(dispatchLoadedTree, dispatchLoadFailure)
     }
     return next(action)

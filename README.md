@@ -5,6 +5,9 @@ Visual and compare dependencies across multiple projects
 
 Document intended usage here...
 
+1] Use as part of build and inject JSON (into DOM)
+2] Use `dist/index.html` and `dist/bundle.min.js` directly and provide your own `modelled-dependencies.json`
+
 ## Local development
 
 ### Build
