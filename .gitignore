@@ -1,4 +1,5 @@
 dist/bundle.min.js.map
+dist/modelled-dependencies.json
 .idea/
 
 # Logs

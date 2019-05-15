@@ -4,12 +4,23 @@ const apply = (x, f) => f(x)
 
 // ------ ACTIONS ------
 export const loadTree = () => ({ type: 'LOAD_TREE' })
-const treeLoadedSuccessfully = () => ({ type: 'TREE_LOAD_SUCCESS' })
+const treeLoadedSuccessfully = data => ({ type: 'TREE_LOAD_SUCCESS', data })
 const treeLoadFailed = () => ({ type: 'TREE_LOAD_FAILED' })
 
 // ------ SELECTORS ------
 export const hasTreeLoadBeenAttempted = state => !!state.tree.loadStatus
 export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'success'
+
+export const artifactIds = state => Object.keys(state.artifacts)
+export const artifactVersion = (state, id) => state.artifacts[id].version
+export const artifactDependencyVersion = (state, id, dependencyId) => apply(
+  state.artifacts[id].dependencies[dependencyId],
+  dep => (dep && dep.version) || ''
+)
+export const artifactDependencyScope = (state, id, dependencyId) => apply(
+  state.artifacts[id].dependencies[dependencyId],
+  dep => (dep && dep.scope) || ''
+)
 
 // ------ REDUCERS ------
 export const treeLoadReducer = (state = { loadStatus: false }, action) => {
@@ -18,6 +29,14 @@ export const treeLoadReducer = (state = { loadStatus: false }, action) => {
       return { ...state, loadStatus: 'success' }
     case 'TREE_LOAD_FAILED':
       return { ...state, loadStatus: 'failed' }
+  }
+  return state
+}
+
+export const artifactsReducer = (state = {}, action) => {
+  switch (action.type) {
+    case 'TREE_LOAD_SUCCESS':
+      return action.data.artifacts
   }
   return state
 }

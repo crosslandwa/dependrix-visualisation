@@ -1,15 +1,14 @@
 import createStore from '../../store'
 import { hasTreeLoadBeenAttempted, hasTreeLoadedSuccessfully, loadTree } from '../interactions'
-
-jest.mock('../../make-request')
 import { makeGETRequest as mockGETRequest } from '../../make-request'
 
+jest.mock('../../make-request')
 
 describe('Tree loading', () => {
   beforeEach(() => {
     mockGETRequest.mockImplementation(() => Promise.reject(new Error('(mock) GET request failed')))
     document.getElementsByTagName('html')[0].innerHTML = ''
-  });
+  })
 
   it('initialises with no tree loaded', () => {
     const store = createStore()
