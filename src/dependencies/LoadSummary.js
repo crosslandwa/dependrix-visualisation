@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import { hasTreeLoadBeenAttempted, hasTreeLoadedSuccessfully, loadTree } from './interactions'
 
 const mapStateToProps = state => ({
-  loadAttempted: hasTreeLoadBeenAttempted(state)
+  loadAttempted: hasTreeLoadBeenAttempted(state),
+  loadSuccess: hasTreeLoadedSuccessfully(state)
 })
 
 const Initialising = () => (
@@ -20,8 +21,8 @@ class LoadSummary extends React.Component {
   }
 
   render () {
-    const { loadAttempted } = this.props
-    return loadAttempted ? (hasTreeLoadedSuccessfully ? null : <LoadFailed />) : <Initialising/>
+    const { loadAttempted, loadSuccess } = this.props
+    return loadAttempted ? (loadSuccess ? null : <LoadFailed />) : <Initialising/>
   }
 }
 
