@@ -4,6 +4,7 @@ import {
   artifactVersion,
   artifactDependencyScope,
   artifactDependencyVersion,
+  dependencyIds,
   loadTree
 } from '../interactions'
 
@@ -53,6 +54,22 @@ describe('Dependency analysis', () => {
           expect(artifactDependencyScope(store.getState(), 'a1', 'd2')).toEqual('test-scope')
           expect(artifactDependencyVersion(store.getState(), 'a1', 'nonsenseDependencyId')).toEqual('')
           expect(artifactDependencyScope(store.getState(), 'a1', 'nonsenseDependencyId')).toEqual('')
+        })
+        .then(done, done.fail)
+    })
+  })
+
+  describe('for each loaded dependency', () => {
+    it('is presented', done => {
+      const store = createStore()
+      expect(dependencyIds(store.getState())).toHaveLength(0)
+      injectModelIntoDom(model(
+        artifact('a1', '1.2.3', dependency('d1', '1.0.0'), dependency('d2', '2.0.0')),
+        artifact('a2', '1.2.3', dependency('d3', '1.0.0'), dependency('d2', '2.0.0'))
+      ))
+      store.dispatch(loadTree())
+        .then(() => {
+          expect(dependencyIds(store.getState())).toHaveLength(3)
         })
         .then(done, done.fail)
     })

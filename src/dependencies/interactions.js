@@ -21,6 +21,7 @@ export const artifactDependencyScope = (state, id, dependencyId) => apply(
   state.artifacts[id].dependencies[dependencyId],
   dep => (dep && dep.scope) || ''
 )
+export const dependencyIds = state => Object.keys(state.dependencies)
 
 // ------ REDUCERS ------
 export const treeLoadReducer = (state = { loadStatus: false }, action) => {
@@ -37,6 +38,14 @@ export const artifactsReducer = (state = {}, action) => {
   switch (action.type) {
     case 'TREE_LOAD_SUCCESS':
       return action.data.artifacts
+  }
+  return state
+}
+
+export const dependenciesReducer = (state = {}, action) => {
+  switch (action.type) {
+    case 'TREE_LOAD_SUCCESS':
+      return action.data.dependencies
   }
   return state
 }
