@@ -6,14 +6,12 @@ const readFile = filename => new Promise((resolve, reject) => fs.readFile(
 ))
 
 export default (model) => Promise.all([
-    readFile(`${__dirname}/dist/index.html`),
-    readFile(`${__dirname}/dist/bundle.min.js`),
-  ])
+  readFile(`${__dirname}/dist/index.html`),
+  readFile(`${__dirname}/dist/bundle.min.js`)
+])
   .then(insertBundleJsInline)
   .then(stripSourceMapping)
   .then(injectModelAsJSON(model))
-
-const um = ([content, js]) => js
 
 const insertBundleJsInline = ([html, js]) => html
   .replace("<script src='bundle.min.js'></script>", '')

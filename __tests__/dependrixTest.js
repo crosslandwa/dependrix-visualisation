@@ -1,5 +1,4 @@
 import Dependrix from '..'
-const fs = require('fs')
 
 describe('Dependrix', () => {
   describe('creates an application', () => {
