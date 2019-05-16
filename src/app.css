@@ -13,7 +13,7 @@
 }
 
 .matrix__table-cell {
-  border: solid 1px gray;
+  border: solid 1px lightgray;
   height: 5em;
   width: 10em;
   max-width: 10em;
@@ -21,7 +21,7 @@
   text-align: center;
 }
 
-.matrix__table-lh-column-cell {
+.matrix__table-cell--lh-column {
   position: sticky;
   left: 0;
   background: white;
@@ -29,7 +29,7 @@
   border-right: solid 2px gray;
 }
 
-.matrix__table-header-cell {
+.matrix__table-cell--header {
   position: sticky;
   top: 0;
   background: white;
@@ -37,6 +37,21 @@
   border-bottom: solid 2px gray
 }
 
-.matrix__table-lh-column-cell.matrix__table-header-cell {
+.matrix__table-cell--overview {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background: lightgray;
+  border-right: solid 2px gray;
+  border-bottom: solid 2px gray;
   z-index: 1;
+}
+
+.input-label {
+  display: block;
+}
+
+.input-text {
+  width: 100%;
+  margin-bottom: 1em;
 }

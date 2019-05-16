@@ -9,10 +9,11 @@ const mapDispatchToProps = dispatch => ({
 
 const ArtifactFilter = ({ update }) => (
   <React.Fragment>
-    <label for="artifactFilter">Filter artifacts</label>
+    <label class="input-label" for="artifactFilter">Filter artifacts</label>
     <input
       id="artifactFilter"
       type="text"
+      class="input-text"
       placeholder="Comma delimited string (e.g. 'artifact1, artifact2')"
       onChange={update}
     />

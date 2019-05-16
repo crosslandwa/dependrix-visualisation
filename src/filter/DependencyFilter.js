@@ -9,10 +9,11 @@ const mapDispatchToProps = dispatch => ({
 
 const DependencyFilter = ({ update }) => (
   <React.Fragment>
-    <label for="artifactFilter">Filter dependencies</label>
+    <label class="input-label" for="artifactFilter">Filter dependencies</label>
     <input
       id="artifactFilter"
       type="text"
+      class="input-text"
       placeholder="Comma delimited string (e.g. 'dependency1, dependency2')"
       onChange={update}
     />
