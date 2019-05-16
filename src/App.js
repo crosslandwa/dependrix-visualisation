@@ -11,7 +11,7 @@ const mapDispatchToProps = {}
 
 const App = props => (
   <React.Fragment>
-    <h1>Dependrix</h1>
+    <h1 class="header--xl">Dependrix</h1>
     <ArtifactFilter />
     <DependencyFilter />
     <LoadSummary />

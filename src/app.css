@@ -1,5 +1,11 @@
-#app {
+.container {
   font-family: sans-serif;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.header--xl {
+  margin-top: 0
 }
 
 .matrix__table {
@@ -10,6 +16,7 @@
   width: 100%;
   overflow: scroll;
   height: 35em;
+  border: solid 1px gray;
 }
 
 .matrix__table-cell {
