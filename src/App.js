@@ -12,8 +12,13 @@ const mapDispatchToProps = {}
 const App = props => (
   <React.Fragment>
     <h1 class="header--xl">Dependrix</h1>
-    <ArtifactFilter />
-    <DependencyFilter />
+    <details class="details" open>
+      <summary class="details__summary">Filters</summary>
+      <div class="details__reveal">
+        <ArtifactFilter />
+        <DependencyFilter />
+      </div>
+    </details>
     <LoadSummary />
     <DependencyMatrix />
   </React.Fragment>

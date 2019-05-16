@@ -8,6 +8,16 @@
   margin-top: 0
 }
 
+.details {
+  margin-bottom: 1em;
+}
+
+.details__reveal {
+  border-left: solid 5px gray;
+  margin-top: 1em;
+  padding: 1em;
+}
+
 .matrix__table {
   border-spacing: 0;
 }
