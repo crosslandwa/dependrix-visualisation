@@ -14,6 +14,10 @@ export const updateDependencyFilter = (search) => ({
   type: 'UPDATE_DEPENDENCY_FILTER',
   search: sanitiseSearch(search)
 })
+export const updateDependencyScopeFilter = (scope = []) => ({
+  type: 'UPDATE_DEPENDENCY_SCOPE_FILTER',
+  scope
+})
 
 const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim()).filter(x => x)
 
@@ -31,11 +35,30 @@ export const artifactDependencyScope = (state, id, dependencyId) => apply(
   state.artifacts[id].dependencies[dependencyId],
   dep => (dep && dep.scope) || ''
 )
-export const dependencyIds = state => filterBySearchTerms(Object.keys(state.dependencies), state.filters.dependencies)
+export const dependencyIds = state => filterByScope(
+  state,
+  filterBySearchTerms(Object.keys(state.dependencies), state.filters.dependencies)
+)
 
 const filterBySearchTerms = (ids, search) => search.length
   ? ids.filter(id => search.some(term => id.toLowerCase().includes(term)))
   : ids
+
+const filterByScope = (state, ids) => apply(
+  state.filters.scope,
+  scope => scope.length
+    ? ids.filter(dependencyId => artifactIds(state).some(id => scope.includes(artifactDependencyScope(state, id, dependencyId))))
+    : ids
+)
+
+export const availableScopes = (state) => artifactIds(state).reduce(
+  (acc, id) => uniques(acc.concat(
+    Object.keys(state.artifacts[id].dependencies).map(depId => artifactDependencyScope(state, id, depId))
+  )).filter(x => x),
+  []
+)
+
+const uniques = (arr = []) => [...(new Set(arr))]
 
 // ------ REDUCERS ------
 export const treeLoadReducer = (state = { loadStatus: false }, action) => {
@@ -64,12 +87,14 @@ export const dependenciesReducer = (state = {}, action) => {
   return state
 }
 
-export const filtersReducer = (state = { artifacts: [], dependencies: [] }, action) => {
+export const filtersReducer = (state = { artifacts: [], dependencies: [], scope: [] }, action) => {
   switch (action.type) {
     case 'UPDATE_ARTIFACT_FILTER':
       return { ...state, artifacts: action.search }
     case 'UPDATE_DEPENDENCY_FILTER':
       return { ...state, dependencies: action.search }
+    case 'UPDATE_DEPENDENCY_SCOPE_FILTER':
+      return { ...state, scope: action.scope }
   }
   return state
 }

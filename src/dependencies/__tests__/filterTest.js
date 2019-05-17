@@ -1,5 +1,13 @@
 import createStore from '../../store'
-import { artifactIds, dependencyIds, loadTree, updateArtifactFilter, updateDependencyFilter } from '../interactions'
+import {
+  artifactIds,
+  availableScopes,
+  dependencyIds,
+  loadTree,
+  updateArtifactFilter,
+  updateDependencyFilter,
+  updateDependencyScopeFilter
+} from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, artifact, dependency, model } from './helpers'
 
 describe('Filtering', () => {
@@ -51,5 +59,47 @@ describe('Filtering', () => {
         expect(dependencyIds(store.getState())).toEqual(['d1', 'd3'])
       })
       .then(done, done.fail)
+  })
+
+  describe('dependencies by scope', () => {
+    it('is possible for the available dependency scopes', done => {
+      const store = createStore()
+      injectModelIntoDom(model(
+        artifact('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2')),
+        artifact('a2', '1.0.0', dependency('d1', '1.0.0', 'scope3'), dependency('d3', '2.0.0'/* no scope */))
+      ))
+
+      store.dispatch(loadTree())
+        .then(() => {
+          expect(availableScopes(store.getState())).toEqual(['scope1', 'scope2', 'scope3'])
+        })
+        .then(done, done.fail)
+    })
+
+    it('is supported', done => {
+      const store = createStore()
+      injectModelIntoDom(model(
+        artifact('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2'), dependency('d3', '1.0.0', 'scope3')),
+        artifact('a2', '1.0.0', dependency('d1', '1.0.0', 'scope2'))
+      ))
+
+      store.dispatch(loadTree())
+        .then(() => {
+          expect(dependencyIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
+
+          store.dispatch(updateDependencyScopeFilter(['scope1']))
+          expect(dependencyIds(store.getState())).toEqual(['d1'])
+
+          store.dispatch(updateDependencyScopeFilter(['scope2']))
+          expect(dependencyIds(store.getState())).toEqual(['d1', 'd2'])
+
+          store.dispatch(updateDependencyScopeFilter())
+          expect(dependencyIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
+
+          store.dispatch(updateDependencyScopeFilter(['scope1', 'scope2']))
+          expect(dependencyIds(store.getState())).toEqual(['d1', 'd2'])
+        })
+        .then(done, done.fail)
+    })
   })
 })

@@ -5,6 +5,7 @@ import LoadSummary from './dependencies/LoadSummary'
 import DependencyMatrix from './dependencies/DependencyMatrix'
 import ArtifactFilter from './filter/ArtifactFilter'
 import DependencyFilter from './filter/DependencyFilter'
+import ScopeFilter from './filter/ScopeFilter'
 
 const mapStateToProps = state => ({})
 const mapDispatchToProps = {}
@@ -17,6 +18,7 @@ const App = props => (
       <div class="details__reveal">
         <ArtifactFilter />
         <DependencyFilter />
+        <ScopeFilter />
       </div>
     </details>
     <LoadSummary />

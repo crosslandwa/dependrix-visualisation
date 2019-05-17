@@ -17,7 +17,7 @@ export const artifact = (id, version, ...dependencies) => ({
   }), {})
 })
 
-export const dependency = (id, version, scope = 'some-scope') => ({ id, version, scope })
+export const dependency = (id, version, scope) => ({ id, version, scope })
 
 export const model = (...artifacts) => artifacts.reduce((acc, artifact) => ({
   artifacts: {

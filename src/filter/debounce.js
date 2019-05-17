@@ -6,3 +6,11 @@ export const debouncedEventValue = (timeout, fn) => {
     timer = setTimeout(() => fn(value), timeout)
   }
 }
+
+export const debounced = (timeout, fn) => {
+  let timer
+  return (...args) => {
+    clearTimeout(timer)
+    timer = setTimeout(() => fn(...args), timeout)
+  }
+}
