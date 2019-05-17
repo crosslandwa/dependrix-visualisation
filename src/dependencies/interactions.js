@@ -35,6 +35,9 @@ export const artifactDependencyScope = (state, id, dependencyId) => apply(
   state.artifacts[id].dependencies[dependencyId],
   dep => (dep && dep.scope) || ''
 )
+export const isScopeAllowedByFilter = (state, scope) => state.filters.scope.length
+  ? state.filters.scope.includes(scope)
+  : true
 export const dependencyIds = state => filterByScope(
   state,
   filterBySearchTerms(Object.keys(state.dependencies), state.filters.dependencies)

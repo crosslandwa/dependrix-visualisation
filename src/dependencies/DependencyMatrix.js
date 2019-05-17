@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { artifactDependencyScope, artifactDependencyVersion, artifactIds, artifactVersion, dependencyIds, hasTreeLoadedSuccessfully } from './interactions'
+import { artifactIds, artifactVersion, dependencyIds, hasTreeLoadedSuccessfully } from './interactions'
+import DependencyCell from './DependencyCell'
 
 const apply = (x, f) => f(x)
 
@@ -13,20 +14,6 @@ const mapStateToProps = state => apply(
     loaded: hasTreeLoadedSuccessfully(state)
   })
 )
-
-const mapStateToDependencyCellProps = (state, { artifactId, dependencyId }) => apply(
-  artifactDependencyVersion(state, artifactId, dependencyId),
-  version => ({
-    version,
-    scope: (version && artifactDependencyScope(state, artifactId, dependencyId)) || ''
-  })
-)
-
-const renderDependencyCell = ({ scope, version }) => version
-  ? <td class="matrix__table-cell">{version}<br/>{scope}</td>
-  : <td class="matrix__table-cell"></td>
-
-const DependencyCell = connect(mapStateToDependencyCellProps)(renderDependencyCell)
 
 const DependencyMatrix = ({ ids, versions, dependencyIds, loaded }) => loaded ? (
   <div class="matrix__table-wrapper">

@@ -3,6 +3,7 @@ import {
   artifactIds,
   availableScopes,
   dependencyIds,
+  isScopeAllowedByFilter,
   loadTree,
   updateArtifactFilter,
   updateDependencyFilter,
@@ -86,6 +87,9 @@ describe('Filtering', () => {
         .then(() => {
           store.dispatch(updateDependencyScopeFilter(['scope2']))
           expect(dependencyIds(store.getState())).toEqual(['d2', 'd3'])
+          expect(isScopeAllowedByFilter(store.getState(), 'scope1')).toEqual(false)
+          expect(isScopeAllowedByFilter(store.getState(), 'scope2')).toEqual(true)
+          expect(isScopeAllowedByFilter(store.getState(), 'bananas')).toEqual(false)
 
           store.dispatch(updateDependencyScopeFilter())
           expect(dependencyIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
@@ -104,6 +108,9 @@ describe('Filtering', () => {
         .then(() => {
           store.dispatch(updateDependencyScopeFilter(['scope1', 'scope2']))
           expect(dependencyIds(store.getState())).toEqual(['d1', 'd2', 'd4'])
+          expect(isScopeAllowedByFilter(store.getState(), 'scope1')).toEqual(true)
+          expect(isScopeAllowedByFilter(store.getState(), 'scope2')).toEqual(true)
+          expect(isScopeAllowedByFilter(store.getState(), 'scope3')).toEqual(false)
         })
         .then(done, done.fail)
     })
