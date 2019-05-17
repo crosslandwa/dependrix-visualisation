@@ -25,7 +25,7 @@ const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim
 export const hasTreeLoadBeenAttempted = state => !!state.tree.loadStatus
 export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'success'
 
-export const artifactIds = state => filterBySearchTerms(Object.keys(state.artifacts), state.filters.artifacts)
+export const artifactIds = state => filterBySearchTerms(Object.keys(state.artifacts), state.filters.artifacts).sort()
 export const artifactVersion = (state, id) => state.artifacts[id].version
 export const artifactDependencyVersion = (state, id, dependencyId) => apply(
   state.artifacts[id].dependencies[dependencyId],
@@ -38,7 +38,7 @@ export const artifactDependencyScope = (state, id, dependencyId) => apply(
 export const dependencyIds = state => filterByScope(
   state,
   filterBySearchTerms(Object.keys(state.dependencies), state.filters.dependencies)
-)
+).sort()
 
 const filterBySearchTerms = (ids, search) => search.length
   ? ids.filter(id => search.some(term => id.toLowerCase().includes(term)))
