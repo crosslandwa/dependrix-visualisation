@@ -1,5 +1,3 @@
-// HELPERS for use in tests only
-
 export const clearModelFromDom = () => {
   document.getElementsByTagName('html')[0].innerHTML = ''
 }
@@ -11,9 +9,9 @@ export const injectModelIntoDom = model => {
 export const artifact = (id, version, ...dependencies) => ({
   id,
   version,
-  dependencies: dependencies.reduce((acc, dep) => ({
+  dependencies: dependencies.reduce((acc, { id, scope, version }) => ({
     ...acc,
-    [dep.id]: { version: dep.version, scope: dep.scope }
+    [id]: { version, scope }
   }), {})
 })
 

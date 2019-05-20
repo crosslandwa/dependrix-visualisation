@@ -62,8 +62,8 @@ describe('Filtering', () => {
       .then(done, done.fail)
   })
 
-  describe('dependencies by scope', () => {
-    it('is possible for the available dependency scopes', done => {
+  describe('libraries by dependency scope', () => {
+    it('is possible for all the existing scopes', done => {
       const store = createStore()
       injectModelIntoDom(model(
         artifact('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2')),
