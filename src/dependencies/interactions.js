@@ -39,7 +39,7 @@ export const artifactDependencyScope = (state, projectId, libraryId) => apply(
 export const isScopeAllowedByFilter = (state, scope) => state.filters.scope.length
   ? state.filters.scope.includes(scope)
   : true
-export const dependencyIds = state => {
+export const libraryIds = state => {
   const scope = state.filters.scope
   const filteredDependenciesForProject = (acc, projectId) => acc.concat(
     Object.keys(dependencies(state, projectId))

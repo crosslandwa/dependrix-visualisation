@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { artifactIds, artifactVersion, dependencyIds, hasTreeLoadedSuccessfully } from './interactions'
+import { artifactIds, artifactVersion, libraryIds, hasTreeLoadedSuccessfully } from './interactions'
 import DependencyCell from './DependencyCell'
 
 const apply = (x, f) => f(x)
@@ -10,12 +10,12 @@ const mapStateToProps = state => apply(
   ids => ({
     ids,
     versions: ids.reduce((acc, id) => ({ ...acc, [id]: artifactVersion(state, id) }), {}),
-    dependencyIds: dependencyIds(state),
+    libraryIds: libraryIds(state),
     loaded: hasTreeLoadedSuccessfully(state)
   })
 )
 
-const DependencyMatrix = ({ ids, versions, dependencyIds, loaded }) => loaded ? (
+const DependencyMatrix = ({ ids, versions, libraryIds, loaded }) => loaded ? (
   <div class="matrix__table-wrapper">
     <table class="matrix__table">
       <thead>
@@ -27,10 +27,10 @@ const DependencyMatrix = ({ ids, versions, dependencyIds, loaded }) => loaded ? 
         </tr>
       </thead>
       <tbody>
-        {dependencyIds.map(dependencyId => (
+        {libraryIds.map(libraryId => (
           <tr>
-            <td class="matrix__table-cell matrix__table-cell--lh-column">{dependencyId}</td>
-            {ids.map(id => <DependencyCell artifactId={id} dependencyId={dependencyId}/>)}
+            <td class="matrix__table-cell matrix__table-cell--lh-column">{libraryId}</td>
+            {ids.map(id => <DependencyCell artifactId={id} libraryId={libraryId}/>)}
           </tr>
         ))}
       </tbody>

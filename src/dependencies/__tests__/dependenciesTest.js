@@ -4,7 +4,7 @@ import {
   artifactVersion,
   artifactDependencyScope,
   artifactDependencyVersion,
-  dependencyIds,
+  libraryIds,
   loadTree
 } from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, artifact, dependency, model } from './helpers'
@@ -42,7 +42,7 @@ describe('Dependency analysis', () => {
         .then(done, done.fail)
     })
 
-    it('describes version and scope of each dependency', done => {
+    it('describes version and scope of each dependent library', done => {
       const store = createStore()
       injectModelIntoDom(model(
         artifact('a1', '1.2.3', dependency('d1', '1.0.0', 'real-scope'), dependency('d2', '2.0.0', 'test-scope'))
@@ -60,17 +60,17 @@ describe('Dependency analysis', () => {
     })
   })
 
-  describe('for each loaded dependency', () => {
+  describe('for each dependent library', () => {
     it('is presented in alphabetic order', done => {
       const store = createStore()
-      expect(dependencyIds(store.getState())).toHaveLength(0)
+      expect(libraryIds(store.getState())).toHaveLength(0)
       injectModelIntoDom(model(
         artifact('a1', '1.2.3', dependency('d2', '1.0.0'), dependency('d1', '2.0.0')),
         artifact('a2', '1.2.3', dependency('d3', '1.0.0'), dependency('d2', '2.0.0'))
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(dependencyIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
+          expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
         })
         .then(done, done.fail)
     })

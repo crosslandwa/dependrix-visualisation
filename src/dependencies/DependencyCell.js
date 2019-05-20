@@ -4,12 +4,12 @@ import { artifactDependencyScope, artifactDependencyVersion, isScopeAllowedByFil
 
 const apply = (x, f) => f(x)
 
-const mapStateToProps = (state, { artifactId, dependencyId }) => apply(
+const mapStateToProps = (state, { artifactId, libraryId }) => apply(
   apply(
-    artifactDependencyVersion(state, artifactId, dependencyId),
+    artifactDependencyVersion(state, artifactId, libraryId),
     version => ({
       version,
-      scope: (version && artifactDependencyScope(state, artifactId, dependencyId)) || ''
+      scope: (version && artifactDependencyScope(state, artifactId, libraryId)) || ''
     })
   ),
   ({ version, scope }) => (scope && isScopeAllowedByFilter(state, scope))
