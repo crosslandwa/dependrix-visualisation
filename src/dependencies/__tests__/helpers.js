@@ -9,17 +9,15 @@ export const injectModelIntoDom = model => {
 export const project = (id, version, ...dependencies) => ({
   id,
   version,
-  dependencies: dependencies.reduce((acc, { id, scope, version }) => ({
-    ...acc,
-    [id]: { version, scope }
-  }), {})
+  dependencies: dependencies.reduce(
+    (acc, { id, scope, version }) => ({ ...acc, [id]: { version, scope } }),
+    {}
+  )
 })
 
 export const dependency = (id, version, scope) => ({ id, version, scope })
 
-export const model = (...artifacts) => artifacts.reduce((acc, artifact) => ({
-  artifacts: {
-    ...acc.artifacts,
-    [artifact.id]: { version: artifact.version, dependencies: artifact.dependencies }
-  }
-}), { artifacts: {} })
+export const model = (...projects) => projects.reduce(
+  (acc, { id, dependencies, version }) => ({ projects: { ...acc.projects, [id]: { version, dependencies } } }),
+  { projects: {} }
+)

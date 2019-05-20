@@ -2,7 +2,7 @@ import Dependrix from '..'
 
 describe('Dependrix', () => {
   describe('creates an application', () => {
-    const dependrix = Dependrix({ artifacts: {} })
+    const dependrix = Dependrix({ projects: {} })
 
     it('with the JS application inlined', done => {
       dependrix.then(html => {
@@ -22,7 +22,7 @@ describe('Dependrix', () => {
       dependrix
         .then(html => html.substring(html.indexOf('<head>'), html.indexOf('</head>') + 7))
         .then(headElementContent => {
-          expect(headElementContent).toMatch(/<script type="application\/json" id="modelled-dependencies">\s*{\s+"artifacts": {}\s+}\s+<\/script>\s*<\/head>/)
+          expect(headElementContent).toMatch(/<script type="application\/json" id="modelled-dependencies">\s*{\s+"projects": {}\s+}\s+<\/script>\s*<\/head>/)
         }).then(done, done.fail)
     })
   })

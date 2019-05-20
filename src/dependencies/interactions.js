@@ -25,9 +25,9 @@ const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim
 export const hasTreeLoadBeenAttempted = state => !!state.tree.loadStatus
 export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'success'
 
-export const projectIds = state => Object.keys(state.artifacts).filter(bySearchTerms(state.filters.projectSearch)).sort()
-export const artifactVersion = (state, id) => state.artifacts[id].version
-const dependencies = (state, projectId) => state.artifacts[projectId].dependencies
+export const projectIds = state => Object.keys(state.projects).filter(bySearchTerms(state.filters.projectSearch)).sort()
+export const artifactVersion = (state, projectId) => state.projects[projectId].version
+const dependencies = (state, projectId) => state.projects[projectId].dependencies
 export const artifactDependencyVersion = (state, projectId, libraryId) => apply(
   dependencies(state, projectId)[libraryId],
   dependency => (dependency && dependency.version) || ''
@@ -74,10 +74,10 @@ export const treeLoadReducer = (state = { loadStatus: false }, action) => {
   return state
 }
 
-export const artifactsReducer = (state = {}, action) => {
+export const projectsReducer = (state = {}, action) => {
   switch (action.type) {
     case 'TREE_LOAD_SUCCESS':
-      return action.data.artifacts
+      return action.data.projects
   }
   return state
 }
