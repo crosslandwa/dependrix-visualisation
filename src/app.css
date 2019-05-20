@@ -24,7 +24,8 @@
 }
 
 .matrix__table-wrapper {
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
   overflow: scroll;
   max-height: 35em;
   border: solid 1px gray;

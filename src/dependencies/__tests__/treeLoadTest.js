@@ -33,7 +33,7 @@ describe('Tree loading', () => {
   it('reports successful tree loading when model is available over HTTP', done => {
     const store = createStore()
 
-    mockGETRequest.mockImplementation(() => Promise.resolve('{"artifacts":{}, "dependencies":{}}'))
+    mockGETRequest.mockImplementation(() => Promise.resolve('{"artifacts":{}}'))
 
     store.dispatch(loadTree())
       .then(() => {

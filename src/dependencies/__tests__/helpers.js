@@ -23,9 +23,5 @@ export const model = (...artifacts) => artifacts.reduce((acc, artifact) => ({
   artifacts: {
     ...acc.artifacts,
     [artifact.id]: { version: artifact.version, dependencies: artifact.dependencies }
-  },
-  dependencies: Object.keys(artifact.dependencies).reduce((deps, id) => ({
-    ...deps,
-    [id]: [...(new Set((deps[id] || []).concat(artifact.dependencies[id].version)))]
-  }), acc.dependencies)
-}), { artifacts: {}, dependencies: {} })
+  }
+}), { artifacts: {} })
