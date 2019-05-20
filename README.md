@@ -1,5 +1,5 @@
 # dependrix-visualisation
-Visual and compare dependencies across multiple projects
+Visual and compare library usage across multiple projects
 
 ## Setup your own dependrix visualisation
 

@@ -6,8 +6,8 @@ const apply = (x, f) => f(x)
 export const loadTree = () => ({ type: 'LOAD_TREE' })
 const treeLoadedSuccessfully = data => ({ type: 'TREE_LOAD_SUCCESS', data })
 const treeLoadFailed = () => ({ type: 'TREE_LOAD_FAILED' })
-export const updateArtifactFilter = (search) => ({
-  type: 'UPDATE_ARTIFACT_FILTER',
+export const updateProjectFilter = (search) => ({
+  type: 'UPDATE_PROJECT_FILTER',
   search: sanitiseSearch(search)
 })
 export const updateLibraryFilter = (search) => ({
@@ -25,7 +25,7 @@ const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim
 export const hasTreeLoadBeenAttempted = state => !!state.tree.loadStatus
 export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'success'
 
-export const artifactIds = state => Object.keys(state.artifacts).filter(bySearchTerms(state.filters.artifacts)).sort()
+export const projectIds = state => Object.keys(state.artifacts).filter(bySearchTerms(state.filters.projectSearch)).sort()
 export const artifactVersion = (state, id) => state.artifacts[id].version
 const dependencies = (state, projectId) => state.artifacts[projectId].dependencies
 export const artifactDependencyVersion = (state, projectId, libraryId) => apply(
@@ -47,14 +47,14 @@ export const libraryIds = state => {
       .filter(bySearchTerms(state.filters.librarySearch))
   )
 
-  return uniques(artifactIds(state).reduce(filteredDependenciesForProject, [])).sort()
+  return uniques(projectIds(state).reduce(filteredDependenciesForProject, [])).sort()
 }
 
 const bySearchTerms = (filters) => filters.length
   ? id => filters.some(term => id.toLowerCase().includes(term))
   : () => true
 
-export const availableScopes = (state) => artifactIds(state).reduce(
+export const availableScopes = (state) => projectIds(state).reduce(
   (acc, projectId) => uniques(acc.concat(
     Object.keys(dependencies(state, projectId)).map(libraryId => artifactDependencyScope(state, projectId, libraryId))
   )).filter(x => x),
@@ -82,10 +82,10 @@ export const artifactsReducer = (state = {}, action) => {
   return state
 }
 
-export const filtersReducer = (state = { artifacts: [], librarySearch: [], scope: [] }, action) => {
+export const filtersReducer = (state = { projectSearch: [], librarySearch: [], scope: [] }, action) => {
   switch (action.type) {
-    case 'UPDATE_ARTIFACT_FILTER':
-      return { ...state, artifacts: action.search }
+    case 'UPDATE_PROJECT_FILTER':
+      return { ...state, projectSearch: action.search }
     case 'UPDATE_LIBRARY_FILTER':
       return { ...state, librarySearch: action.search }
     case 'UPDATE_DEPENDENCY_SCOPE_FILTER':

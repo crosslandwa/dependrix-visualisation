@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import './app.css'
 import LoadSummary from './dependencies/LoadSummary'
 import DependencyMatrix from './dependencies/DependencyMatrix'
-import ArtifactFilter from './filter/ArtifactFilter'
+import ProjectFilter from './filter/ProjectFilter'
 import LibraryFilter from './filter/LibraryFilter'
 import ScopeFilter from './filter/ScopeFilter'
 
@@ -16,7 +16,7 @@ const App = props => (
     <details class="details" open>
       <summary class="details__summary">Filters</summary>
       <div class="details__reveal">
-        <ArtifactFilter />
+        <ProjectFilter />
         <LibraryFilter />
         <ScopeFilter />
       </div>

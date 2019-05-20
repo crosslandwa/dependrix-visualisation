@@ -1,41 +1,41 @@
 import createStore from '../../store'
 import {
-  artifactIds,
+  projectIds,
   availableScopes,
   libraryIds,
   isScopeAllowedByFilter,
   loadTree,
-  updateArtifactFilter,
+  updateProjectFilter,
   updateLibraryFilter,
   updateDependencyScopeFilter
 } from '../interactions'
-import { clearModelFromDom, injectModelIntoDom, artifact, dependency, model } from './helpers'
+import { clearModelFromDom, injectModelIntoDom, project, dependency, model } from './helpers'
 
 describe('Filtering', () => {
   beforeEach(() => {
     clearModelFromDom()
   })
 
-  it('of artifacts is done with a fuzzy matching comma separated string', done => {
+  it('of projects is done with a fuzzy matching comma separated string', done => {
     const store = createStore()
     injectModelIntoDom(model(
-      artifact('a1', '1.0.0'),
-      artifact('a2', '2.0.0'),
-      artifact('a3', '2.0.0')
+      project('a1', '1.0.0'),
+      project('a2', '2.0.0'),
+      project('a3', '2.0.0')
     ))
 
     store.dispatch(loadTree())
       .then(() => {
-        expect(artifactIds(store.getState())).toEqual(['a1', 'a2', 'a3'])
+        expect(projectIds(store.getState())).toEqual(['a1', 'a2', 'a3'])
 
-        store.dispatch(updateArtifactFilter('a1'))
-        expect(artifactIds(store.getState())).toEqual(['a1'])
+        store.dispatch(updateProjectFilter('a1'))
+        expect(projectIds(store.getState())).toEqual(['a1'])
 
-        store.dispatch(updateArtifactFilter('a'))
-        expect(artifactIds(store.getState())).toEqual(['a1', 'a2', 'a3'])
+        store.dispatch(updateProjectFilter('a'))
+        expect(projectIds(store.getState())).toEqual(['a1', 'a2', 'a3'])
 
-        store.dispatch(updateArtifactFilter('a1, , 3')) // note empty search terms and additional whitespace
-        expect(artifactIds(store.getState())).toEqual(['a1', 'a3'])
+        store.dispatch(updateProjectFilter('a1, , 3')) // note empty search terms and additional whitespace
+        expect(projectIds(store.getState())).toEqual(['a1', 'a3'])
       })
       .then(done, done.fail)
   })
@@ -43,7 +43,7 @@ describe('Filtering', () => {
   it('of libraries is done with a fuzzy matching comma separated string', done => {
     const store = createStore()
     injectModelIntoDom(model(
-      artifact('a1', '1.0.0', dependency('d1', '1.0.0'), dependency('d2', '1.0.0'), dependency('d3', '1.0.0'))
+      project('a1', '1.0.0', dependency('d1', '1.0.0'), dependency('d2', '1.0.0'), dependency('d3', '1.0.0'))
     ))
 
     store.dispatch(loadTree())
@@ -66,8 +66,8 @@ describe('Filtering', () => {
     it('is possible for all the existing scopes', done => {
       const store = createStore()
       injectModelIntoDom(model(
-        artifact('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2')),
-        artifact('a2', '1.0.0', dependency('d1', '1.0.0', 'scope3'), dependency('d3', '2.0.0'/* no scope */))
+        project('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2')),
+        project('a2', '1.0.0', dependency('d1', '1.0.0', 'scope3'), dependency('d3', '2.0.0'/* no scope */))
       ))
 
       store.dispatch(loadTree())
@@ -80,7 +80,7 @@ describe('Filtering', () => {
     it('is supported for a single scope', done => {
       const store = createStore()
       injectModelIntoDom(model(
-        artifact('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2'), dependency('d3', '1.0.0', 'scope2'))
+        project('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2'), dependency('d3', '1.0.0', 'scope2'))
       ))
 
       store.dispatch(loadTree())
@@ -100,8 +100,8 @@ describe('Filtering', () => {
     it('is supported for a multiple scopes at the same time', done => {
       const store = createStore()
       injectModelIntoDom(model(
-        artifact('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2'), dependency('d3', '1.0.0', 'scope3')),
-        artifact('a2', '1.0.0', dependency('d4', '1.0.0', 'scope2'))
+        project('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2'), dependency('d3', '1.0.0', 'scope3')),
+        project('a2', '1.0.0', dependency('d4', '1.0.0', 'scope2'))
       ))
 
       store.dispatch(loadTree())

@@ -1,39 +1,39 @@
 import createStore from '../../store'
 import {
-  artifactIds,
+  projectIds,
   artifactVersion,
   artifactDependencyScope,
   artifactDependencyVersion,
   libraryIds,
   loadTree
 } from '../interactions'
-import { clearModelFromDom, injectModelIntoDom, artifact, dependency, model } from './helpers'
+import { clearModelFromDom, injectModelIntoDom, project, dependency, model } from './helpers'
 
 describe('Dependency analysis', () => {
   beforeEach(() => {
     clearModelFromDom()
   })
 
-  describe('for each loaded artifact', () => {
+  describe('for each loaded project', () => {
     it('is presented in alphabetic order', done => {
       const store = createStore()
-      expect(artifactIds(store.getState())).toHaveLength(0)
+      expect(projectIds(store.getState())).toHaveLength(0)
 
       injectModelIntoDom(model(
-        artifact('a2', '2.0.0'),
-        artifact('a1', '1.0.0')
+        project('a2', '2.0.0'),
+        project('a1', '1.0.0')
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(artifactIds(store.getState())).toEqual(['a1', 'a2'])
+          expect(projectIds(store.getState())).toEqual(['a1', 'a2'])
         })
         .then(done, done.fail)
     })
 
-    it('describes the artifact version', done => {
+    it('describes the project version', done => {
       const store = createStore()
       injectModelIntoDom(model(
-        artifact('a1', '1.2.3')
+        project('a1', '1.2.3')
       ))
       store.dispatch(loadTree())
         .then(() => {
@@ -45,7 +45,7 @@ describe('Dependency analysis', () => {
     it('describes version and scope of each dependent library', done => {
       const store = createStore()
       injectModelIntoDom(model(
-        artifact('a1', '1.2.3', dependency('d1', '1.0.0', 'real-scope'), dependency('d2', '2.0.0', 'test-scope'))
+        project('a1', '1.2.3', dependency('d1', '1.0.0', 'real-scope'), dependency('d2', '2.0.0', 'test-scope'))
       ))
       store.dispatch(loadTree())
         .then(() => {
@@ -65,8 +65,8 @@ describe('Dependency analysis', () => {
       const store = createStore()
       expect(libraryIds(store.getState())).toHaveLength(0)
       injectModelIntoDom(model(
-        artifact('a1', '1.2.3', dependency('d2', '1.0.0'), dependency('d1', '2.0.0')),
-        artifact('a2', '1.2.3', dependency('d3', '1.0.0'), dependency('d2', '2.0.0'))
+        project('a1', '1.2.3', dependency('d2', '1.0.0'), dependency('d1', '2.0.0')),
+        project('a2', '1.2.3', dependency('d3', '1.0.0'), dependency('d2', '2.0.0'))
       ))
       store.dispatch(loadTree())
         .then(() => {

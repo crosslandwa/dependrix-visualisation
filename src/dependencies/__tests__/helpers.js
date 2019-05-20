@@ -6,7 +6,7 @@ export const injectModelIntoDom = model => {
   document.body.innerHTML = `<script id="modelled-dependencies">${JSON.stringify(model)}</script>`
 }
 
-export const artifact = (id, version, ...dependencies) => ({
+export const project = (id, version, ...dependencies) => ({
   id,
   version,
   dependencies: dependencies.reduce((acc, { id, scope, version }) => ({
