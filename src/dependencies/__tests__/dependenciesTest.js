@@ -1,11 +1,11 @@
 import createStore from '../../store'
 import {
-  projectIds,
-  artifactVersion,
-  artifactDependencyScope,
-  artifactDependencyVersion,
+  dependencyScope,
+  dependencyVersion,
   libraryIds,
-  loadTree
+  loadTree,
+  projectIds,
+  projectVersion
 } from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, project, dependency, model } from './helpers'
 
@@ -37,7 +37,7 @@ describe('Dependency analysis', () => {
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(artifactVersion(store.getState(), 'a1')).toEqual('1.2.3')
+          expect(projectVersion(store.getState(), 'a1')).toEqual('1.2.3')
         })
         .then(done, done.fail)
     })
@@ -49,12 +49,12 @@ describe('Dependency analysis', () => {
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(artifactDependencyVersion(store.getState(), 'a1', 'd1')).toEqual('1.0.0')
-          expect(artifactDependencyScope(store.getState(), 'a1', 'd1')).toEqual('real-scope')
-          expect(artifactDependencyVersion(store.getState(), 'a1', 'd2')).toEqual('2.0.0')
-          expect(artifactDependencyScope(store.getState(), 'a1', 'd2')).toEqual('test-scope')
-          expect(artifactDependencyVersion(store.getState(), 'a1', 'nonsenseDependencyId')).toEqual('')
-          expect(artifactDependencyScope(store.getState(), 'a1', 'nonsenseDependencyId')).toEqual('')
+          expect(dependencyVersion(store.getState(), 'a1', 'd1')).toEqual('1.0.0')
+          expect(dependencyScope(store.getState(), 'a1', 'd1')).toEqual('real-scope')
+          expect(dependencyVersion(store.getState(), 'a1', 'd2')).toEqual('2.0.0')
+          expect(dependencyScope(store.getState(), 'a1', 'd2')).toEqual('test-scope')
+          expect(dependencyVersion(store.getState(), 'a1', 'nonsenseDependencyId')).toEqual('')
+          expect(dependencyScope(store.getState(), 'a1', 'nonsenseDependencyId')).toEqual('')
         })
         .then(done, done.fail)
     })

@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { projectIds, artifactVersion, libraryIds, hasTreeLoadedSuccessfully } from './interactions'
+import { projectIds, projectVersion, libraryIds, hasTreeLoadedSuccessfully } from './interactions'
 import DependencyCell from './DependencyCell'
 
 const apply = (x, f) => f(x)
@@ -9,7 +9,7 @@ const mapStateToProps = state => apply(
   projectIds(state),
   projectIds => ({
     projectIds,
-    versions: projectIds.reduce((acc, projectId) => ({ ...acc, [projectId]: artifactVersion(state, projectId) }), {}),
+    versions: projectIds.reduce((acc, projectId) => ({ ...acc, [projectId]: projectVersion(state, projectId) }), {}),
     libraryIds: libraryIds(state),
     loaded: hasTreeLoadedSuccessfully(state)
   })

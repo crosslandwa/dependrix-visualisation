@@ -26,13 +26,13 @@ export const hasTreeLoadBeenAttempted = state => !!state.tree.loadStatus
 export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'success'
 
 export const projectIds = state => Object.keys(state.projects).filter(bySearchTerms(state.filters.projectSearch)).sort()
-export const artifactVersion = (state, projectId) => state.projects[projectId].version
+export const projectVersion = (state, projectId) => state.projects[projectId].version
 const dependencies = (state, projectId) => state.projects[projectId].dependencies
-export const artifactDependencyVersion = (state, projectId, libraryId) => apply(
+export const dependencyVersion = (state, projectId, libraryId) => apply(
   dependencies(state, projectId)[libraryId],
   dependency => (dependency && dependency.version) || ''
 )
-export const artifactDependencyScope = (state, projectId, libraryId) => apply(
+export const dependencyScope = (state, projectId, libraryId) => apply(
   dependencies(state, projectId)[libraryId],
   dependency => (dependency && dependency.scope) || ''
 )
@@ -43,7 +43,7 @@ export const libraryIds = state => {
   const scope = state.filters.scope
   const filteredDependenciesForProject = (acc, projectId) => acc.concat(
     Object.keys(dependencies(state, projectId))
-      .filter(libraryId => !scope.length || scope.includes(artifactDependencyScope(state, projectId, libraryId)))
+      .filter(libraryId => !scope.length || scope.includes(dependencyScope(state, projectId, libraryId)))
       .filter(bySearchTerms(state.filters.librarySearch))
   )
 
@@ -56,7 +56,7 @@ const bySearchTerms = (filters) => filters.length
 
 export const availableScopes = (state) => projectIds(state).reduce(
   (acc, projectId) => uniques(acc.concat(
-    Object.keys(dependencies(state, projectId)).map(libraryId => artifactDependencyScope(state, projectId, libraryId))
+    Object.keys(dependencies(state, projectId)).map(libraryId => dependencyScope(state, projectId, libraryId))
   )).filter(x => x),
   []
 )
