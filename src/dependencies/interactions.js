@@ -14,9 +14,9 @@ export const updateLibraryFilter = (search) => ({
   type: 'UPDATE_LIBRARY_FILTER',
   search: sanitiseSearch(search)
 })
-export const updateDependencyScopeFilter = (scope = []) => ({
+export const updateDependencyScopeFilter = (selectedScopes = []) => ({
   type: 'UPDATE_DEPENDENCY_SCOPE_FILTER',
-  scope
+  selectedScopes
 })
 
 const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim()).filter(x => x)
@@ -25,7 +25,8 @@ const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim
 export const hasTreeLoadBeenAttempted = state => !!state.tree.loadStatus
 export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'success'
 
-export const projectIds = state => Object.keys(state.projects).filter(bySearchTerms(state.filters.projectSearch)).sort()
+const allProjectIds = state => Object.keys(state.projects)
+export const projectIds = state => allProjectIds(state).filter(bySearchTerms(state.filters.projectSearch)).sort()
 export const projectVersion = (state, projectId) => state.projects[projectId].version
 const dependencies = (state, projectId) => state.projects[projectId].dependencies
 export const dependencyVersion = (state, projectId, libraryId) => apply(
@@ -36,14 +37,14 @@ export const dependencyScope = (state, projectId, libraryId) => apply(
   dependencies(state, projectId)[libraryId],
   dependency => (dependency && dependency.scope) || ''
 )
-export const isScopeAllowedByFilter = (state, scope) => state.filters.scope.length
-  ? state.filters.scope.includes(scope)
+export const isScopeAllowedByFilter = (state, scope) => state.filters.selectedScopes.length
+  ? state.filters.selectedScopes.includes(scope)
   : true
 export const libraryIds = state => {
-  const scope = state.filters.scope
+  const selectedScopes = state.filters.selectedScopes
   const filteredDependenciesForProject = (acc, projectId) => acc.concat(
     Object.keys(dependencies(state, projectId))
-      .filter(libraryId => !scope.length || scope.includes(dependencyScope(state, projectId, libraryId)))
+      .filter(libraryId => !selectedScopes.length || selectedScopes.includes(dependencyScope(state, projectId, libraryId)))
       .filter(bySearchTerms(state.filters.librarySearch))
   )
 
@@ -54,7 +55,7 @@ const bySearchTerms = (filters) => filters.length
   ? id => filters.some(term => id.toLowerCase().includes(term))
   : () => true
 
-export const availableScopes = (state) => projectIds(state).reduce(
+export const availableScopes = (state) => allProjectIds(state).reduce(
   (acc, projectId) => uniques(acc.concat(
     Object.keys(dependencies(state, projectId)).map(libraryId => dependencyScope(state, projectId, libraryId))
   )).filter(x => x),
@@ -82,14 +83,14 @@ export const projectsReducer = (state = {}, action) => {
   return state
 }
 
-export const filtersReducer = (state = { projectSearch: [], librarySearch: [], scope: [] }, action) => {
+export const filtersReducer = (state = { projectSearch: [], librarySearch: [], selectedScopes: [] }, action) => {
   switch (action.type) {
     case 'UPDATE_PROJECT_FILTER':
       return { ...state, projectSearch: action.search }
     case 'UPDATE_LIBRARY_FILTER':
       return { ...state, librarySearch: action.search }
     case 'UPDATE_DEPENDENCY_SCOPE_FILTER':
-      return { ...state, scope: action.scope }
+      return { ...state, selectedScopes: action.selectedScopes }
   }
   return state
 }
