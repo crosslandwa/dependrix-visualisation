@@ -6,7 +6,7 @@ import {
   isScopeAllowedByFilter,
   loadTree,
   updateArtifactFilter,
-  updateDependencyFilter,
+  updateLibraryFilter,
   updateDependencyScopeFilter
 } from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, artifact, dependency, model } from './helpers'
@@ -40,7 +40,7 @@ describe('Filtering', () => {
       .then(done, done.fail)
   })
 
-  it('of dependencies is done with a fuzzy matching comma separated string', done => {
+  it('of libraries is done with a fuzzy matching comma separated string', done => {
     const store = createStore()
     injectModelIntoDom(model(
       artifact('a1', '1.0.0', dependency('d1', '1.0.0'), dependency('d2', '1.0.0'), dependency('d3', '1.0.0'))
@@ -50,13 +50,13 @@ describe('Filtering', () => {
       .then(() => {
         expect(dependencyIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
 
-        store.dispatch(updateDependencyFilter('d1'))
+        store.dispatch(updateLibraryFilter('d1'))
         expect(dependencyIds(store.getState())).toEqual(['d1'])
 
-        store.dispatch(updateDependencyFilter('d'))
+        store.dispatch(updateLibraryFilter('d'))
         expect(dependencyIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
 
-        store.dispatch(updateDependencyFilter('d1, , 3')) // note empty search terms and additional whitespace
+        store.dispatch(updateLibraryFilter('d1, , 3')) // note empty search terms and additional whitespace
         expect(dependencyIds(store.getState())).toEqual(['d1', 'd3'])
       })
       .then(done, done.fail)

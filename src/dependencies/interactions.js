@@ -10,8 +10,8 @@ export const updateArtifactFilter = (search) => ({
   type: 'UPDATE_ARTIFACT_FILTER',
   search: sanitiseSearch(search)
 })
-export const updateDependencyFilter = (search) => ({
-  type: 'UPDATE_DEPENDENCY_FILTER',
+export const updateLibraryFilter = (search) => ({
+  type: 'UPDATE_LIBRARY_FILTER',
   search: sanitiseSearch(search)
 })
 export const updateDependencyScopeFilter = (scope = []) => ({
@@ -44,7 +44,7 @@ export const dependencyIds = state => {
   const filteredDependenciesForProject = (acc, projectId) => acc.concat(
     Object.keys(dependencies(state, projectId))
       .filter(libraryId => !scope.length || scope.includes(artifactDependencyScope(state, projectId, libraryId)))
-      .filter(bySearchTerms(state.filters.dependencies))
+      .filter(bySearchTerms(state.filters.librarySearch))
   )
 
   return uniques(artifactIds(state).reduce(filteredDependenciesForProject, [])).sort()
@@ -82,12 +82,12 @@ export const artifactsReducer = (state = {}, action) => {
   return state
 }
 
-export const filtersReducer = (state = { artifacts: [], dependencies: [], scope: [] }, action) => {
+export const filtersReducer = (state = { artifacts: [], librarySearch: [], scope: [] }, action) => {
   switch (action.type) {
     case 'UPDATE_ARTIFACT_FILTER':
       return { ...state, artifacts: action.search }
-    case 'UPDATE_DEPENDENCY_FILTER':
-      return { ...state, dependencies: action.search }
+    case 'UPDATE_LIBRARY_FILTER':
+      return { ...state, librarySearch: action.search }
     case 'UPDATE_DEPENDENCY_SCOPE_FILTER':
       return { ...state, scope: action.scope }
   }
