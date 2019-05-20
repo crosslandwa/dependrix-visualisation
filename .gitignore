@@ -1,4 +1,4 @@
-dist/bundle.min.js.map
+dist/bundle.*
 dist/modelled-dependencies.json
 .idea/
 
