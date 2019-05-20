@@ -40,6 +40,10 @@
   text-align: center;
 }
 
+.matrix__table-cell-label {
+  display: block;
+}
+
 .matrix__table-cell--lh-column {
   position: sticky;
   left: 0;

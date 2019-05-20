@@ -17,8 +17,15 @@ const mapStateToProps = (state, { projectId, libraryId }) => apply(
     : {}
 )
 
-const DependencyCell = ({ scope, version }) => version
-  ? <td class="matrix__table-cell">{version}<br/>{scope}</td>
-  : <td class="matrix__table-cell"></td>
+const DependencyCell = ({ scope, version }) => (
+  <td class="matrix__table-cell">
+    {version && (
+      <React.Fragment>
+        <span class="matrix__table-cell-label">{version}</span>
+        <span class="matrix__table-cell-label">{scope}</span>
+      </React.Fragment>
+    )}
+  </td>
+)
 
 export default connect(mapStateToProps)(DependencyCell)

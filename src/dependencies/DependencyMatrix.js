@@ -1,29 +1,21 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { projectIds, projectVersion, libraryIds, hasTreeLoadedSuccessfully } from './interactions'
+import { projectIds, libraryIds } from './interactions'
 import DependencyCell from './DependencyCell'
+import ProjectCell from './ProjectCell'
 
-const apply = (x, f) => f(x)
+const mapStateToProps = state => ({
+  projectIds: projectIds(state),
+  libraryIds: libraryIds(state)
+})
 
-const mapStateToProps = state => apply(
-  projectIds(state),
-  projectIds => ({
-    projectIds,
-    versions: projectIds.reduce((acc, projectId) => ({ ...acc, [projectId]: projectVersion(state, projectId) }), {}),
-    libraryIds: libraryIds(state),
-    loaded: hasTreeLoadedSuccessfully(state)
-  })
-)
-
-const DependencyMatrix = ({ projectIds, versions, libraryIds, loaded }) => loaded ? (
+const DependencyMatrix = ({ projectIds, libraryIds }) => (
   <div class="matrix__table-wrapper">
     <table class="matrix__table">
       <thead>
         <tr>
           <td class="matrix__table-cell matrix__table-cell--overview"></td>
-          {projectIds.map(projectId => (
-            <td class="matrix__table-cell matrix__table-cell--header">{projectId}<br/>{versions[projectId]}</td>
-          ))}
+          {projectIds.map(projectId => <ProjectCell projectId={projectId} />)}
         </tr>
       </thead>
       <tbody>
@@ -36,8 +28,6 @@ const DependencyMatrix = ({ projectIds, versions, libraryIds, loaded }) => loade
       </tbody>
     </table>
   </div>
-) : (
-  null
 )
 
 export default connect(mapStateToProps)(DependencyMatrix)
