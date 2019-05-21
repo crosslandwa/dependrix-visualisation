@@ -14,7 +14,10 @@ const DependencyMatrix = ({ projectIds, libraryIds }) => (
     <table class="matrix__table">
       <thead>
         <tr>
-          <td class="matrix__table-cell matrix__table-cell--overview"></td>
+          <td class="matrix__table-cell matrix__table-cell--overview">
+            <span class="matrix__table-cell-label">{projectIds.length} projects</span>
+            <span class="matrix__table-cell-label">{libraryIds.length} libraries</span>
+          </td>
           {projectIds.map(projectId => <ProjectCell projectId={projectId} />)}
         </tr>
       </thead>
