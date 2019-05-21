@@ -25,8 +25,7 @@ const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim
 export const hasTreeLoadBeenAttempted = state => !!state.tree.loadStatus
 export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'success'
 
-const allProjectIds = state => Object.keys(state.projects)
-export const projectIds = state => allProjectIds(state).filter(bySearchTerms(state.filters.projectSearch)).sort()
+export const projectIds = state => Object.keys(state.projects).filter(bySearchTerms(state.filters.projectSearch)).sort()
 export const projectVersion = (state, projectId) => state.projects[projectId].version
 const dependencies = (state, projectId) => state.projects[projectId].dependencies
 export const dependencyVersion = (state, projectId, libraryId) => apply(
@@ -55,12 +54,7 @@ const bySearchTerms = (filters) => filters.length
   ? id => filters.some(term => id.toLowerCase().includes(term))
   : () => true
 
-export const availableScopes = (state) => allProjectIds(state).reduce(
-  (acc, projectId) => uniques(acc.concat(
-    Object.keys(dependencies(state, projectId)).map(libraryId => dependencyScope(state, projectId, libraryId))
-  )).filter(x => x),
-  []
-)
+export const availableScopes = (state) => state.dependencyScopes
 
 const uniques = (arr = []) => [...(new Set(arr))]
 
@@ -83,6 +77,14 @@ export const projectsReducer = (state = {}, action) => {
   return state
 }
 
+export const dependencyScopesReducer = (state = [], action) => {
+  switch (action.type) {
+    case 'TREE_LOAD_SUCCESS':
+      return action.data.dependencyScopes
+  }
+  return state
+}
+
 export const filtersReducer = (state = { projectSearch: [], librarySearch: [], selectedScopes: [] }, action) => {
   switch (action.type) {
     case 'UPDATE_PROJECT_FILTER':
@@ -101,7 +103,10 @@ export function treeLoadMiddleware (store) {
     switch (action.type) {
       case 'LOAD_TREE':
         const dispatchLoadedTree = data => {
-          next(treeLoadedSuccessfully(data))
+          next(treeLoadedSuccessfully({
+            projects: data.projects,
+            dependencyScopes: parseScopes(data)
+          }))
         }
         const dispatchLoadFailure = (error) => {
           console.error(error.message)
@@ -120,3 +125,13 @@ export function treeLoadMiddleware (store) {
     return next(action)
   }
 }
+
+const parseScopes = data => Object.keys(data.projects).reduce(
+  (acc, projectId) => uniques(acc.concat(
+    Object.keys(data.projects[projectId].dependencies).reduce(
+      (inner, libraryId) => inner.concat(data.projects[projectId].dependencies[libraryId].scope),
+      []
+    )
+  )),
+  []
+).filter(x => x)
