@@ -1,13 +1,13 @@
 import createStore from '../../store'
 import {
-  projectIds,
   availableScopes,
+  dependencyVersion,
   libraryIds,
-  isScopeAllowedByFilter,
   loadTree,
-  updateProjectFilter,
+  projectIds,
+  updateDependencyScopeFilter,
   updateLibraryFilter,
-  updateDependencyScopeFilter
+  updateProjectFilter
 } from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, project, dependency, model } from './helpers'
 
@@ -106,9 +106,6 @@ describe('Filtering', () => {
         .then(() => {
           store.dispatch(updateDependencyScopeFilter(['scope2']))
           expect(libraryIds(store.getState())).toEqual(['d2', 'd3'])
-          expect(isScopeAllowedByFilter(store.getState(), 'scope1')).toEqual(false)
-          expect(isScopeAllowedByFilter(store.getState(), 'scope2')).toEqual(true)
-          expect(isScopeAllowedByFilter(store.getState(), 'bananas')).toEqual(false)
 
           store.dispatch(updateDependencyScopeFilter())
           expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
@@ -127,9 +124,27 @@ describe('Filtering', () => {
         .then(() => {
           store.dispatch(updateDependencyScopeFilter(['scope1', 'scope2']))
           expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd4'])
-          expect(isScopeAllowedByFilter(store.getState(), 'scope1')).toEqual(true)
-          expect(isScopeAllowedByFilter(store.getState(), 'scope2')).toEqual(true)
-          expect(isScopeAllowedByFilter(store.getState(), 'scope3')).toEqual(false)
+        })
+        .then(done, done.fail)
+    })
+
+    it('prevents dependencies versions being report for dependencies that do not meet the filter criteria', done => {
+      const store = createStore()
+      injectModelIntoDom(model(
+        project('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2'), dependency('d3', '1.0.0', 'scope3')),
+        project('a2', '1.0.0', dependency('d4', '1.0.0', 'scope2'))
+      ))
+
+      store.dispatch(loadTree())
+        .then(() => {
+          expect(dependencyVersion(store.getState(), 'a1', 'd1')).toEqual('1.0.0')
+          expect(dependencyVersion(store.getState(), 'a1', 'd3')).toEqual('1.0.0')
+          expect(dependencyVersion(store.getState(), 'a2', 'd4')).toEqual('1.0.0')
+
+          store.dispatch(updateDependencyScopeFilter(['scope1', 'scope2']))
+          expect(dependencyVersion(store.getState(), 'a1', 'd1')).toEqual('1.0.0')
+          expect(dependencyVersion(store.getState(), 'a1', 'd3')).toEqual('')
+          expect(dependencyVersion(store.getState(), 'a2', 'd4')).toEqual('1.0.0')
         })
         .then(done, done.fail)
     })

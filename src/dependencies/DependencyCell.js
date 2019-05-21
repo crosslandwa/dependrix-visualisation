@@ -1,20 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { dependencyScope, dependencyVersion, isScopeAllowedByFilter } from './interactions'
+import { dependencyScope, dependencyVersion } from './interactions'
 
 const apply = (x, f) => f(x)
 
 const mapStateToProps = (state, { projectId, libraryId }) => apply(
-  apply(
-    dependencyVersion(state, projectId, libraryId),
-    version => ({
-      version,
-      scope: (version && dependencyScope(state, projectId, libraryId)) || ''
-    })
-  ),
-  ({ version, scope }) => (scope && isScopeAllowedByFilter(state, scope))
-    ? { version, scope }
-    : {}
+  dependencyVersion(state, projectId, libraryId),
+  version => ({
+    version,
+    scope: (version && dependencyScope(state, projectId, libraryId)) || ''
+  })
 )
 
 const DependencyCell = ({ scope, version }) => (
