@@ -1,6 +1,8 @@
 import { makeGETRequest } from '../make-request'
 
 const apply = (x, f) => f(x)
+const uniques = (arr = []) => [...(new Set(arr))]
+const passAlways = () => true
 
 // ------ ACTIONS ------
 export const loadTree = () => ({ type: 'LOAD_TREE' })
@@ -25,7 +27,7 @@ const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim
 export const hasTreeLoadBeenAttempted = state => !!state.tree.loadStatus
 export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'success'
 
-export const projectIds = state => Object.keys(state.projects).filter(bySearchTerms(state.filters.projectSearch)).sort()
+export const projectIds = state => Object.keys(state.projects).filter(isProjectAllowedByFilters(state)).sort()
 export const projectVersion = (state, projectId) => state.projects[projectId].version
 const dependencies = (state, projectId) => state.projects[projectId].dependencies
 export const dependencyVersion = (state, projectId, libraryId) => apply(
@@ -36,27 +38,39 @@ export const dependencyScope = (state, projectId, libraryId) => apply(
   dependencies(state, projectId)[libraryId],
   dependency => (dependency && dependency.scope) || ''
 )
+export const availableScopes = (state) => state.dependencyScopes
 export const isScopeAllowedByFilter = (state, scope) => state.filters.selectedScopes.length
   ? state.filters.selectedScopes.includes(scope)
   : true
 export const libraryIds = state => {
-  const selectedScopes = state.filters.selectedScopes
-  const filteredDependenciesForProject = (acc, projectId) => acc.concat(
-    Object.keys(dependencies(state, projectId))
-      .filter(libraryId => !selectedScopes.length || selectedScopes.includes(dependencyScope(state, projectId, libraryId)))
-      .filter(bySearchTerms(state.filters.librarySearch))
-  )
+  return projectIds(state).reduce(
+    (acc, projectId) => uniques(acc.concat(
+      Object.keys(dependencies(state, projectId)).filter(isDependencyAllowedByFilters(state, projectId))
+    )),
+    []
+  ).sort()
+}
 
-  return uniques(projectIds(state).reduce(filteredDependenciesForProject, [])).sort()
+const isProjectAllowedByFilters = (state) => {
+  const bySearch = bySearchTerms(state.filters.projectSearch)
+  const dependencyFiltersActive = !!(state.filters.librarySearch.length || state.filters.selectedScopes.length)
+  const byDependencies = dependencyFiltersActive
+    ? projectId => Object.keys(state.projects[projectId].dependencies).some(isDependencyAllowedByFilters(state, projectId))
+    : passAlways
+  return projectId => bySearch(projectId) && byDependencies(projectId)
+}
+
+const isDependencyAllowedByFilters = (state, projectId) => {
+  const bySearch = bySearchTerms(state.filters.librarySearch)
+  const byScope = state.filters.selectedScopes.length
+    ? libraryId => state.filters.selectedScopes.includes(dependencyScope(state, projectId, libraryId))
+    : passAlways
+  return libraryId => bySearch(libraryId) && byScope(libraryId)
 }
 
 const bySearchTerms = (filters) => filters.length
   ? id => filters.some(term => id.toLowerCase().includes(term))
-  : () => true
-
-export const availableScopes = (state) => state.dependencyScopes
-
-const uniques = (arr = []) => [...(new Set(arr))]
+  : passAlways
 
 // ------ REDUCERS ------
 export const treeLoadReducer = (state = { loadStatus: false }, action) => {

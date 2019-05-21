@@ -40,26 +40,45 @@ describe('Filtering', () => {
       .then(done, done.fail)
   })
 
-  it('of libraries is done with a fuzzy matching comma separated string', done => {
-    const store = createStore()
-    injectModelIntoDom(model(
-      project('a1', '1.0.0', dependency('d1', '1.0.0'), dependency('d2', '1.0.0'), dependency('d3', '1.0.0'))
-    ))
+  describe('of libraries', () => {
+    it('is done with a fuzzy matching comma separated string', done => {
+      const store = createStore()
+      injectModelIntoDom(model(
+        project('a1', '1.0.0', dependency('d1', '1.0.0'), dependency('d2', '1.0.0'), dependency('d3', '1.0.0'))
+      ))
 
-    store.dispatch(loadTree())
-      .then(() => {
-        expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
+      store.dispatch(loadTree())
+        .then(() => {
+          expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
 
-        store.dispatch(updateLibraryFilter('d1'))
-        expect(libraryIds(store.getState())).toEqual(['d1'])
+          store.dispatch(updateLibraryFilter('d1'))
+          expect(libraryIds(store.getState())).toEqual(['d1'])
 
-        store.dispatch(updateLibraryFilter('d'))
-        expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
+          store.dispatch(updateLibraryFilter('d'))
+          expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
 
-        store.dispatch(updateLibraryFilter('d1, , 3')) // note empty search terms and additional whitespace
-        expect(libraryIds(store.getState())).toEqual(['d1', 'd3'])
-      })
-      .then(done, done.fail)
+          store.dispatch(updateLibraryFilter('d1, , 3')) // note empty search terms and additional whitespace
+          expect(libraryIds(store.getState())).toEqual(['d1', 'd3'])
+        })
+        .then(done, done.fail)
+    })
+
+    it('causes projects with no dependencies to be excluded', done => {
+      const store = createStore()
+      injectModelIntoDom(model(
+        project('a1', '1.0.0', dependency('d1', '1.0.0')),
+        project('a2', '1.0.0')
+      ))
+
+      store.dispatch(loadTree())
+        .then(() => {
+          expect(projectIds(store.getState())).toEqual(['a1', 'a2'])
+
+          store.dispatch(updateLibraryFilter('d1'))
+          expect(projectIds(store.getState())).toEqual(['a1'])
+        })
+        .then(done, done.fail)
+    })
   })
 
   describe('libraries by dependency scope', () => {
