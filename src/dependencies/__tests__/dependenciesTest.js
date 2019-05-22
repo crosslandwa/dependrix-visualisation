@@ -1,7 +1,6 @@
 import createStore from '../../store'
 import {
-  dependencyScope,
-  dependencyVersion,
+  dependencies,
   libraryIds,
   loadTree,
   projectIds,
@@ -49,12 +48,9 @@ describe('Dependency analysis', () => {
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(dependencyVersion(store.getState(), 'a1', 'd1')).toEqual('1.0.0')
-          expect(dependencyScope(store.getState(), 'a1', 'd1')).toEqual('real-scope')
-          expect(dependencyVersion(store.getState(), 'a1', 'd2')).toEqual('2.0.0')
-          expect(dependencyScope(store.getState(), 'a1', 'd2')).toEqual('test-scope')
-          expect(dependencyVersion(store.getState(), 'a1', 'nonsenseDependencyId')).toEqual('')
-          expect(dependencyScope(store.getState(), 'a1', 'nonsenseDependencyId')).toEqual('')
+          expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([{ version: '1.0.0', scope: 'real-scope' }])
+          expect(dependencies(store.getState(), 'a1', 'd2')).toEqual([{ version: '2.0.0', scope: 'test-scope' }])
+          expect(dependencies(store.getState(), 'a1', 'nonsenseDependencyId')).toHaveLength(0)
         })
         .then(done, done.fail)
     })

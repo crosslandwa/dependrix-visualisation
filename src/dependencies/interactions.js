@@ -29,21 +29,24 @@ export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'suc
 
 export const projectIds = state => Object.keys(state.projects).filter(isProjectAllowedByFilters(state)).sort()
 export const projectVersion = (state, projectId) => state.projects[projectId].version
-const dependencies = (state, projectId) => state.projects[projectId].dependencies
-export const dependencyVersion = (state, projectId, libraryId) => [libraryId]
-  .filter(isDependencyAllowedByFilters(state, projectId))
-  .map(libraryId => dependencies(state, projectId)[libraryId])
-  .filter(x => x)
-  .map(dependency => dependency.version)[0] || ''
-export const dependencyScope = (state, projectId, libraryId) => apply(
-  dependencies(state, projectId)[libraryId],
+const dependencyMapFor = (state, projectId) => state.projects[projectId].dependencies
+export const dependencies = (state, projectId, libraryId) => {
+  const dependencyFromModel = dependencyMapFor(state, projectId)[libraryId]
+  return (dependencyFromModel && isDependencyAllowedByFilters(state, projectId)(libraryId))
+    ? [{
+      scope: dependencyFromModel.scope,
+      version: dependencyFromModel.version
+    }] : []
+}
+const dependencyScope = (state, projectId, libraryId) => apply(
+  dependencyMapFor(state, projectId)[libraryId],
   dependency => (dependency && dependency.scope) || ''
 )
 export const availableScopes = (state) => state.dependencyScopes
 export const libraryIds = state => {
   return projectIds(state).reduce(
     (acc, projectId) => uniques(acc.concat(
-      Object.keys(dependencies(state, projectId)).filter(isDependencyAllowedByFilters(state, projectId))
+      Object.keys(dependencyMapFor(state, projectId)).filter(isDependencyAllowedByFilters(state, projectId))
     )),
     []
   ).sort()

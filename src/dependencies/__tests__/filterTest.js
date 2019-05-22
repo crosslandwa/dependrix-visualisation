@@ -1,7 +1,7 @@
 import createStore from '../../store'
 import {
   availableScopes,
-  dependencyVersion,
+  dependencies,
   libraryIds,
   loadTree,
   projectIds,
@@ -128,7 +128,7 @@ describe('Filtering', () => {
         .then(done, done.fail)
     })
 
-    it('prevents dependencies versions being report for dependencies that do not meet the filter criteria', done => {
+    it('prevents dependencies being reported that do not meet the filter criteria', done => {
       const store = createStore()
       injectModelIntoDom(model(
         project('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2'), dependency('d3', '1.0.0', 'scope3')),
@@ -137,14 +137,14 @@ describe('Filtering', () => {
 
       store.dispatch(loadTree())
         .then(() => {
-          expect(dependencyVersion(store.getState(), 'a1', 'd1')).toEqual('1.0.0')
-          expect(dependencyVersion(store.getState(), 'a1', 'd3')).toEqual('1.0.0')
-          expect(dependencyVersion(store.getState(), 'a2', 'd4')).toEqual('1.0.0')
+          expect(dependencies(store.getState(), 'a1', 'd1')).toHaveLength(1)
+          expect(dependencies(store.getState(), 'a1', 'd3')).toHaveLength(1)
+          expect(dependencies(store.getState(), 'a2', 'd4')).toHaveLength(1)
 
           store.dispatch(updateDependencyScopeFilter(['scope1', 'scope2']))
-          expect(dependencyVersion(store.getState(), 'a1', 'd1')).toEqual('1.0.0')
-          expect(dependencyVersion(store.getState(), 'a1', 'd3')).toEqual('')
-          expect(dependencyVersion(store.getState(), 'a2', 'd4')).toEqual('1.0.0')
+          expect(dependencies(store.getState(), 'a1', 'd1')).toHaveLength(1)
+          expect(dependencies(store.getState(), 'a1', 'd3')).toHaveLength(0)
+          expect(dependencies(store.getState(), 'a2', 'd4')).toHaveLength(1)
         })
         .then(done, done.fail)
     })

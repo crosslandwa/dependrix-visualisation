@@ -1,25 +1,19 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { dependencyScope, dependencyVersion } from './interactions'
+import { dependencies } from './interactions'
 
-const apply = (x, f) => f(x)
+const mapStateToProps = (state, { projectId, libraryId }) => ({
+  dependencies: dependencies(state, projectId, libraryId)
+})
 
-const mapStateToProps = (state, { projectId, libraryId }) => apply(
-  dependencyVersion(state, projectId, libraryId),
-  version => ({
-    version,
-    scope: (version && dependencyScope(state, projectId, libraryId)) || ''
-  })
-)
-
-const DependencyCell = ({ scope, version }) => (
+const DependencyCell = ({ dependencies }) => (
   <td class="matrix__table-cell">
-    {version && (
+    {dependencies.map(({ scope, version }) => (
       <React.Fragment>
         <span class="matrix__table-cell-label">{version}</span>
         <span class="matrix__table-cell-label">{scope}</span>
       </React.Fragment>
-    )}
+    ))}
   </td>
 )
 
