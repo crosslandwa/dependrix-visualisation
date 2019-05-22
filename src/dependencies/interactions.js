@@ -29,28 +29,27 @@ export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'suc
 
 export const projectIds = state => Object.keys(state.projects).filter(isProjectAllowedByFilters(state)).sort()
 export const projectVersion = (state, projectId) => state.projects[projectId].version
-
-export const dependencies = (state, projectId, libraryId) => {
-  return state.projects[projectId].dependencies
-    .filter(dependency => dependency.id === libraryId)
-    .filter(isDependencyAllowedByFilters(state))
-}
+const projectDependencies = (state, projectId) => state.projects[projectId].dependencies
+export const dependencies = (state, projectId, libraryId) => projectDependencies(state, projectId)
+  .filter(dependency => dependency.id === libraryId)
+  .filter(isDependencyAllowedByFilters(state))
 
 export const availableScopes = (state) => state.dependencyScopes
 export const libraryIds = state => {
-  return projectIds(state).reduce(
-    (acc, projectId) => uniques(acc.concat(
-      state.projects[projectId].dependencies.filter(isDependencyAllowedByFilters(state)).map(dependency => dependency.id)
-    )),
-    []
-  ).sort()
+  const libFilter = isDependencyAllowedByFilters(state)
+  return projectIds(state).reduce((acc, projectId) => uniques(
+    acc.concat(projectDependencies(state, projectId)
+      .filter(libFilter)
+      .map(dependency => dependency.id)
+    )
+  ), []).sort()
 }
 
 const isProjectAllowedByFilters = (state) => {
   const bySearch = bySearchTerms(state.filters.projectSearch)
   const dependencyFiltersActive = !!(state.filters.librarySearch.length || state.filters.selectedScopes.length)
   const byDependencies = dependencyFiltersActive
-    ? projectId => state.projects[projectId].dependencies.some(isDependencyAllowedByFilters(state))
+    ? projectId => projectDependencies(state, projectId).some(isDependencyAllowedByFilters(state))
     : passAlways
   return projectId => bySearch(projectId) && byDependencies(projectId)
 }
