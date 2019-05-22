@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DependrixVisualisation",
+  "type": "object",
+  "properties": {
+    "projects": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z_$][0-9a-zA-Z_$]*$": { "$ref": "#/definitions/project" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions": {
+    "project": {
+      "type": "object",
+      "required": [ "version", "dependencies" ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "The version of the project"
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "The libraries depended on by this project",
+          "items": { "$ref": "#/definitions/dependency" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "dependency": {
+      "type": "object",
+      "required": [ "id", "version" ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the dependent library"
+        },
+        "version": {
+          "type": "string",
+          "description": "The version of the dependent library"
+        },
+        "scope": {
+          "type": "string",
+          "description": "[Optional] description of the scope (e.g. test, compile, etc) of the dependent library"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

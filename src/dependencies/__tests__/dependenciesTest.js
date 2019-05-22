@@ -48,9 +48,24 @@ describe('Dependency analysis', () => {
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([{ version: '1.0.0', scope: 'real-scope' }])
-          expect(dependencies(store.getState(), 'a1', 'd2')).toEqual([{ version: '2.0.0', scope: 'test-scope' }])
+          expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([{ id: 'd1', version: '1.0.0', scope: 'real-scope' }])
+          expect(dependencies(store.getState(), 'a1', 'd2')).toEqual([{ id: 'd2', version: '2.0.0', scope: 'test-scope' }])
           expect(dependencies(store.getState(), 'a1', 'nonsenseDependencyId')).toHaveLength(0)
+        })
+        .then(done, done.fail)
+    })
+
+    it('describes where dependencies exist on multiple versions of the same library', done => {
+      const store = createStore()
+      injectModelIntoDom(model(
+        project('a1', '1.2.3', dependency('d1', '1.0.0', 'real-scope'), dependency('d1', '2.0.0', 'test-scope'))
+      ))
+      store.dispatch(loadTree())
+        .then(() => {
+          expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([
+            { id: 'd1', version: '1.0.0', scope: 'real-scope' },
+            { id: 'd1', version: '2.0.0', scope: 'test-scope' }
+          ])
         })
         .then(done, done.fail)
     })

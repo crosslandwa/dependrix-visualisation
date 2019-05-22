@@ -6,17 +6,8 @@ export const injectModelIntoDom = model => {
   document.body.innerHTML = `<script id="modelled-dependencies">${JSON.stringify(model)}</script>`
 }
 
-export const project = (id, version, ...dependencies) => ({
-  id,
-  version,
-  dependencies: dependencies.reduce(
-    (acc, { id, scope, version }) => ({ ...acc, [id]: { version, scope } }),
-    {}
-  )
-})
-
+export const project = (id, version, ...dependencies) => ({ id, version, dependencies })
 export const dependency = (id, version, scope) => ({ id, version, scope })
-
 export const model = (...projects) => projects.reduce(
   (acc, { id, dependencies, version }) => ({ projects: { ...acc.projects, [id]: { version, dependencies } } }),
   { projects: {} }

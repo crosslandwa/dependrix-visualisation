@@ -29,24 +29,18 @@ export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'suc
 
 export const projectIds = state => Object.keys(state.projects).filter(isProjectAllowedByFilters(state)).sort()
 export const projectVersion = (state, projectId) => state.projects[projectId].version
-const dependencyMapFor = (state, projectId) => state.projects[projectId].dependencies
+
 export const dependencies = (state, projectId, libraryId) => {
-  const dependencyFromModel = dependencyMapFor(state, projectId)[libraryId]
-  return (dependencyFromModel && isDependencyAllowedByFilters(state, projectId)(libraryId))
-    ? [{
-      scope: dependencyFromModel.scope,
-      version: dependencyFromModel.version
-    }] : []
+  return state.projects[projectId].dependencies
+    .filter(dependency => dependency.id === libraryId)
+    .filter(isDependencyAllowedByFilters(state))
 }
-const dependencyScope = (state, projectId, libraryId) => apply(
-  dependencyMapFor(state, projectId)[libraryId],
-  dependency => (dependency && dependency.scope) || ''
-)
+
 export const availableScopes = (state) => state.dependencyScopes
 export const libraryIds = state => {
   return projectIds(state).reduce(
     (acc, projectId) => uniques(acc.concat(
-      Object.keys(dependencyMapFor(state, projectId)).filter(isDependencyAllowedByFilters(state, projectId))
+      state.projects[projectId].dependencies.filter(isDependencyAllowedByFilters(state)).map(dependency => dependency.id)
     )),
     []
   ).sort()
@@ -56,17 +50,17 @@ const isProjectAllowedByFilters = (state) => {
   const bySearch = bySearchTerms(state.filters.projectSearch)
   const dependencyFiltersActive = !!(state.filters.librarySearch.length || state.filters.selectedScopes.length)
   const byDependencies = dependencyFiltersActive
-    ? projectId => Object.keys(state.projects[projectId].dependencies).some(isDependencyAllowedByFilters(state, projectId))
+    ? projectId => state.projects[projectId].dependencies.some(isDependencyAllowedByFilters(state))
     : passAlways
   return projectId => bySearch(projectId) && byDependencies(projectId)
 }
 
-const isDependencyAllowedByFilters = (state, projectId) => {
+const isDependencyAllowedByFilters = (state) => {
   const bySearch = bySearchTerms(state.filters.librarySearch)
   const byScope = state.filters.selectedScopes.length
-    ? libraryId => state.filters.selectedScopes.includes(dependencyScope(state, projectId, libraryId))
+    ? scope => state.filters.selectedScopes.includes(scope)
     : passAlways
-  return libraryId => bySearch(libraryId) && byScope(libraryId)
+  return dependency => bySearch(dependency.id) && byScope(dependency.scope)
 }
 
 const bySearchTerms = (filters) => filters.length
@@ -143,10 +137,7 @@ export function treeLoadMiddleware (store) {
 
 const parseScopes = data => Object.keys(data.projects).reduce(
   (acc, projectId) => uniques(acc.concat(
-    Object.keys(data.projects[projectId].dependencies).reduce(
-      (inner, libraryId) => inner.concat(data.projects[projectId].dependencies[libraryId].scope),
-      []
-    )
+    data.projects[projectId].dependencies.map(dependency => dependency.scope)
   )),
   []
 ).filter(x => x)
