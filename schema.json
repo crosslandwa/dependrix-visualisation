@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "DependrixVisualisation",
   "type": "object",
+  "required": [ "projects" ],
   "properties": {
     "projects": {
       "type": "object",
