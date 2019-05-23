@@ -44,6 +44,33 @@
   display: block;
 }
 
+.matrix__table-cell-label--major::before {
+  content: 'M: ';
+}
+
+.matrix__table-cell-label--major {
+  box-shadow: inset 0em 0em 1em 0px red;
+  border-radius: 1em;
+}
+
+.matrix__table-cell-label--minor::before {
+  content: 'm: ';
+}
+
+.matrix__table-cell-label--minor {
+  box-shadow: inset 0em 0em 1em 0px orange;
+  border-radius: 1em;
+}
+
+.matrix__table-cell-label--patch::before {
+  content: 'p: ';
+}
+
+.matrix__table-cell-label--patch {
+  box-shadow: inset 0em 0em 1em 0px yellow;
+  border-radius: 1em;
+}
+
 .matrix__table-cell--lh-column {
   position: sticky;
   left: 0;

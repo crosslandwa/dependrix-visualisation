@@ -1,4 +1,5 @@
 import { makeGETRequest } from '../make-request'
+import { newerOf, versionLag } from './semver-compare'
 
 const apply = (x, f) => f(x)
 const uniques = (arr = []) => [...(new Set(arr))]
@@ -80,7 +81,23 @@ export const treeLoadReducer = (state = { loadStatus: false }, action) => {
 export const projectsReducer = (state = {}, action) => {
   switch (action.type) {
     case 'TREE_LOAD_SUCCESS':
-      return action.data.projects
+      return Object.keys(action.data.projects).reduce(
+        (acc, projectId) => ({
+          ...acc,
+          [projectId]: {
+            version: action.data.projects[projectId].version,
+            dependencies: action.data.projects[projectId].dependencies.map(
+              ({ id, version, scope = '' }) => ({
+                id,
+                version,
+                scope,
+                versionLag: versionLag(version, action.data.latestLibraryVersions[id])
+              })
+            )
+          }
+        }),
+        {}
+      )
   }
   return state
 }
@@ -113,7 +130,8 @@ export function treeLoadMiddleware (store) {
         const dispatchLoadedTree = data => {
           next(treeLoadedSuccessfully({
             projects: data.projects,
-            dependencyScopes: parseScopes(data)
+            dependencyScopes: parseScopes(data),
+            latestLibraryVersions: parseLatestLibraryVersions(data)
           }))
         }
         const dispatchLoadFailure = (error) => {
@@ -140,3 +158,14 @@ const parseScopes = data => Object.keys(data.projects).reduce(
   )),
   []
 ).filter(x => x)
+
+const parseLatestLibraryVersions = data => Object.keys(data.projects).reduce(
+  (latestVersions, projectId) => data.projects[projectId].dependencies.reduce(
+    (acc, { id, version }) => ({
+      ...acc,
+      [id]: newerOf(acc[id], version)
+    }),
+    latestVersions
+  ),
+  {}
+)

@@ -48,8 +48,12 @@ describe('Dependency analysis', () => {
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([{ id: 'd1', version: '1.0.0', scope: 'real-scope' }])
-          expect(dependencies(store.getState(), 'a1', 'd2')).toEqual([{ id: 'd2', version: '2.0.0', scope: 'test-scope' }])
+          expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([
+            { id: 'd1', version: '1.0.0', scope: 'real-scope', versionLag: '' }
+          ])
+          expect(dependencies(store.getState(), 'a1', 'd2')).toEqual([
+            { id: 'd2', version: '2.0.0', scope: 'test-scope', versionLag: '' }
+          ])
           expect(dependencies(store.getState(), 'a1', 'nonsenseDependencyId')).toHaveLength(0)
         })
         .then(done, done.fail)
@@ -63,8 +67,8 @@ describe('Dependency analysis', () => {
       store.dispatch(loadTree())
         .then(() => {
           expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([
-            { id: 'd1', version: '1.0.0', scope: 'real-scope' },
-            { id: 'd1', version: '2.0.0', scope: 'test-scope' }
+            { id: 'd1', version: '1.0.0', scope: 'real-scope', versionLag: 'major' },
+            { id: 'd1', version: '2.0.0', scope: 'test-scope', versionLag: '' }
           ])
         })
         .then(done, done.fail)

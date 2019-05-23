@@ -8,9 +8,9 @@ const mapStateToProps = (state, { projectId, libraryId }) => ({
 
 const DependencyCell = ({ dependencies }) => (
   <td class="matrix__table-cell">
-    {dependencies.map(({ scope, version }) => (
+    {dependencies.map(({ scope, version, versionLag }) => (
       <React.Fragment>
-        <span class="matrix__table-cell-label">{version}</span>
+        <span class={`matrix__table-cell-label${versionLag ? ` matrix__table-cell-label--${versionLag}` : ''}`}>{version}</span>
         <span class="matrix__table-cell-label">{scope}</span>
       </React.Fragment>
     ))}
