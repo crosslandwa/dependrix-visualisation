@@ -2,6 +2,7 @@ import React from 'react'
 import LibraryFilter from './LibraryFilter'
 import ProjectFilter from './ProjectFilter'
 import ScopeFilter from './ScopeFilter'
+import VersionLagFilter from './VersionLagFilter'
 
 const Filters = ({ dependenciesLoaded }) => (
   <details class="details" open={!!dependenciesLoaded}>
@@ -10,6 +11,7 @@ const Filters = ({ dependenciesLoaded }) => (
       <ProjectFilter />
       <LibraryFilter />
       <ScopeFilter />
+      <VersionLagFilter />
     </div>
   </details>
 )

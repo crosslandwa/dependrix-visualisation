@@ -21,6 +21,10 @@ export const updateDependencyScopeFilter = (selectedScopes = []) => ({
   type: 'UPDATE_DEPENDENCY_SCOPE_FILTER',
   selectedScopes
 })
+export const updateVersionLagFilter = (selectedVersionLags = []) => ({
+  type: 'UPDATE_VERSION_LAG_FILTER',
+  selectedVersionLags
+})
 
 const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim()).filter(x => x)
 
@@ -35,6 +39,7 @@ export const dependencies = (state, projectId, libraryId) => projectDependencies
   .filter(dependency => dependency.id === libraryId)
   .filter(isDependencyAllowedByFilters(state))
 
+export const availableVersionLags = (state) => ['major', 'minor', 'patch']
 export const availableScopes = (state) => state.dependencyScopes
 export const libraryIds = state => {
   const libFilter = isDependencyAllowedByFilters(state)
@@ -48,7 +53,7 @@ export const libraryIds = state => {
 
 const isProjectAllowedByFilters = (state) => {
   const bySearch = bySearchTerms(state.filters.projectSearch)
-  const dependencyFiltersActive = !!(state.filters.librarySearch.length || state.filters.selectedScopes.length)
+  const dependencyFiltersActive = !!(state.filters.librarySearch.length || state.filters.selectedScopes.length || state.filters.selectedVersionLags.length)
   const byDependencies = dependencyFiltersActive
     ? projectId => projectDependencies(state, projectId).some(isDependencyAllowedByFilters(state))
     : passAlways
@@ -60,7 +65,10 @@ const isDependencyAllowedByFilters = (state) => {
   const byScope = state.filters.selectedScopes.length
     ? scope => state.filters.selectedScopes.includes(scope)
     : passAlways
-  return dependency => bySearch(dependency.id) && byScope(dependency.scope)
+  const byVersionLag = state.filters.selectedVersionLags.length
+    ? versionLag => state.filters.selectedVersionLags.includes(versionLag)
+    : passAlways
+  return dependency => bySearch(dependency.id) && byScope(dependency.scope) && byVersionLag(dependency.versionLag)
 }
 
 const bySearchTerms = (filters) => filters.length
@@ -110,7 +118,7 @@ export const dependencyScopesReducer = (state = [], action) => {
   return state
 }
 
-export const filtersReducer = (state = { projectSearch: [], librarySearch: [], selectedScopes: [] }, action) => {
+export const filtersReducer = (state = { projectSearch: [], librarySearch: [], selectedScopes: [], selectedVersionLags: [] }, action) => {
   switch (action.type) {
     case 'UPDATE_PROJECT_FILTER':
       return { ...state, projectSearch: action.search }
@@ -118,6 +126,8 @@ export const filtersReducer = (state = { projectSearch: [], librarySearch: [], s
       return { ...state, librarySearch: action.search }
     case 'UPDATE_DEPENDENCY_SCOPE_FILTER':
       return { ...state, selectedScopes: action.selectedScopes }
+    case 'UPDATE_VERSION_LAG_FILTER':
+      return { ...state, selectedVersionLags: action.selectedVersionLags }
   }
   return state
 }
