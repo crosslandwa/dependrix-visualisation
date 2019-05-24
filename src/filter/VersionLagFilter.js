@@ -33,15 +33,15 @@ class VersionLagFilter extends React.Component {
   render () {
     const { availableVersionLags } = this.props
     return (
-      <fieldset>
-        <legend>
+      <fieldset class="checkbox-group__fieldset">
+        <legend class="checkbox-group__legend">
           Filter by version lag
         </legend>
         <div>
           {availableVersionLags.map(lag => (
             <React.Fragment>
               <input
-                class="checkbox__input"
+                class="checkbox-group__input"
                 id={lag}
                 name="versionLag"
                 type="checkbox"
@@ -49,7 +49,7 @@ class VersionLagFilter extends React.Component {
                 onChange={this.update}
               />
               <label
-                class="govuk-checkbox__label"
+                class="checkbox-group__label"
                 for={lag}
               >
                 {lag}

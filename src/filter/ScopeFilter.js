@@ -33,15 +33,15 @@ class ScopeFilter extends React.Component {
   render () {
     const { availableScopes } = this.props
     return (
-      <fieldset>
-        <legend>
+      <fieldset class="checkbox-group__fieldset">
+        <legend class="checkbox-group__legend">
           Filter by scope
         </legend>
         <div>
           {availableScopes.map(scope => (
             <React.Fragment>
               <input
-                class="checkbox__input"
+                class="checkbox-group__input"
                 id={scope}
                 name="scope"
                 type="checkbox"
@@ -49,7 +49,7 @@ class ScopeFilter extends React.Component {
                 onChange={this.update}
               />
               <label
-                class="govuk-checkbox__label"
+                class="checkbox-group__label"
                 for={scope}
               >
                 {scope}

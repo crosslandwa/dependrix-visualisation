@@ -7,11 +7,11 @@ const mapStateToProps = state => ({
 })
 
 const Initialising = () => (
-  <div>Initialising...</div>
+  <div class="load-summary">Initialising...</div>
 )
 
 const LoadFailed = () => (
-  <div>Tree load failed</div>
+  <div class="load-summary">Tree load failed</div>
 )
 
 class LoadSummary extends React.Component {

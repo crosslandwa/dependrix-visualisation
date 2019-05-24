@@ -8,14 +8,14 @@
   margin-top: 0
 }
 
-.details {
-  margin-bottom: 1em;
+.load-summary {
+  margin-top: 1em;
 }
 
 .details__reveal {
   border-left: solid 5px gray;
   margin-top: 1em;
-  padding: 1em;
+  padding: 0 1em;
 }
 
 .matrix__table {
@@ -29,6 +29,7 @@
   overflow: scroll;
   max-height: 35em;
   border: solid 1px gray;
+  margin-top: 1em;
 }
 
 .matrix__table-cell {
@@ -99,9 +100,26 @@
 
 .input-label {
   display: block;
+  margin-top: 0.5em;
+  margin-bottom: 0.25em;
 }
 
 .input-text {
   width: 100%;
-  margin-bottom: 1em;
+}
+
+.checkbox-group__fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 0.5em;
+}
+
+.checkbox-group__legend {
+  margin-bottom: 0.25em;
+}
+
+.checkbox-group__label {
+  margin-left: 0.25em;
+  margin-right: 1em;
 }
