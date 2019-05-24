@@ -32,7 +32,7 @@ const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim
 export const hasTreeLoadBeenAttempted = state => !!state.tree.loadStatus
 export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'success'
 
-export const projectIds = state => Object.keys(state.projects).filter(isProjectAllowedByFilters(state)).sort()
+export const filteredProjectIds = state => Object.keys(state.projects).filter(isProjectAllowedByFilters(state)).sort()
 export const projectVersion = (state, projectId) => state.projects[projectId].version
 const projectDependencies = (state, projectId) => state.projects[projectId].dependencies
 
@@ -55,9 +55,9 @@ export const filteredDependencyMap = (state, projectIds) => {
 
 export const availableVersionLags = (state) => ['major', 'minor', 'patch']
 export const availableScopes = (state) => state.dependencyScopes
-export const libraryIds = state => {
+export const filteredLibraryIds = (state, projectIds) => {
   const libFilter = isDependencyAllowedByFilters(state)
-  return projectIds(state).reduce((acc, projectId) => uniques(
+  return projectIds.reduce((acc, projectId) => uniques(
     acc.concat(projectDependencies(state, projectId)
       .filter(libFilter)
       .map(dependency => dependency.id)

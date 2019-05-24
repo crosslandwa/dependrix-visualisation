@@ -2,9 +2,9 @@ import createStore from '../../store'
 import {
   availableScopes,
   filteredDependencyMap,
-  libraryIds,
+  filteredLibraryIds,
+  filteredProjectIds,
   loadTree,
-  projectIds,
   updateDependencyScopeFilter,
   updateLibraryFilter,
   updateProjectFilter
@@ -31,16 +31,16 @@ describe('Filtering', () => {
 
     store.dispatch(loadTree())
       .then(() => {
-        expect(projectIds(store.getState())).toEqual(['a1', 'a2', 'a3'])
+        expect(filteredProjectIds(store.getState())).toEqual(['a1', 'a2', 'a3'])
 
         store.dispatch(updateProjectFilter('a1'))
-        expect(projectIds(store.getState())).toEqual(['a1'])
+        expect(filteredProjectIds(store.getState())).toEqual(['a1'])
 
         store.dispatch(updateProjectFilter('a'))
-        expect(projectIds(store.getState())).toEqual(['a1', 'a2', 'a3'])
+        expect(filteredProjectIds(store.getState())).toEqual(['a1', 'a2', 'a3'])
 
         store.dispatch(updateProjectFilter('a1, , 3')) // note empty search terms and additional whitespace
-        expect(projectIds(store.getState())).toEqual(['a1', 'a3'])
+        expect(filteredProjectIds(store.getState())).toEqual(['a1', 'a3'])
       })
       .then(done, done.fail)
   })
@@ -54,16 +54,16 @@ describe('Filtering', () => {
 
       store.dispatch(loadTree())
         .then(() => {
-          expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
+          expect(filteredLibraryIds(store.getState(), ['a1'])).toEqual(['d1', 'd2', 'd3'])
 
           store.dispatch(updateLibraryFilter('d1'))
-          expect(libraryIds(store.getState())).toEqual(['d1'])
+          expect(filteredLibraryIds(store.getState(), ['a1'])).toEqual(['d1'])
 
           store.dispatch(updateLibraryFilter('d'))
-          expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
+          expect(filteredLibraryIds(store.getState(), ['a1'])).toEqual(['d1', 'd2', 'd3'])
 
           store.dispatch(updateLibraryFilter('d1, , 3')) // note empty search terms and additional whitespace
-          expect(libraryIds(store.getState())).toEqual(['d1', 'd3'])
+          expect(filteredLibraryIds(store.getState(), ['a1'])).toEqual(['d1', 'd3'])
         })
         .then(done, done.fail)
     })
@@ -77,10 +77,10 @@ describe('Filtering', () => {
 
       store.dispatch(loadTree())
         .then(() => {
-          expect(projectIds(store.getState())).toEqual(['a1', 'a2'])
+          expect(filteredProjectIds(store.getState())).toEqual(['a1', 'a2'])
 
           store.dispatch(updateLibraryFilter('d1'))
-          expect(projectIds(store.getState())).toEqual(['a1'])
+          expect(filteredProjectIds(store.getState())).toEqual(['a1'])
         })
         .then(done, done.fail)
     })
@@ -110,10 +110,10 @@ describe('Filtering', () => {
       store.dispatch(loadTree())
         .then(() => {
           store.dispatch(updateDependencyScopeFilter(['scope2']))
-          expect(libraryIds(store.getState())).toEqual(['d2', 'd3'])
+          expect(filteredLibraryIds(store.getState(), ['a1'])).toEqual(['d2', 'd3'])
 
           store.dispatch(updateDependencyScopeFilter())
-          expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
+          expect(filteredLibraryIds(store.getState(), ['a1'])).toEqual(['d1', 'd2', 'd3'])
         })
         .then(done, done.fail)
     })
@@ -128,7 +128,7 @@ describe('Filtering', () => {
       store.dispatch(loadTree())
         .then(() => {
           store.dispatch(updateDependencyScopeFilter(['scope1', 'scope2']))
-          expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd4'])
+          expect(filteredLibraryIds(store.getState(), ['a1', 'a2'])).toEqual(['d1', 'd2', 'd4'])
         })
         .then(done, done.fail)
     })

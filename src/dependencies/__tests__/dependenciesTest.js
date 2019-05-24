@@ -1,9 +1,9 @@
 import createStore from '../../store'
 import {
   filteredDependencyMap,
-  libraryIds,
+  filteredLibraryIds,
+  filteredProjectIds,
   loadTree,
-  projectIds,
   projectVersion
 } from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, project, dependency, model } from './helpers'
@@ -21,7 +21,7 @@ describe('Dependency analysis', () => {
   describe('for each loaded project', () => {
     it('is presented in alphabetic order', done => {
       const store = createStore()
-      expect(projectIds(store.getState())).toHaveLength(0)
+      expect(filteredProjectIds(store.getState())).toHaveLength(0)
 
       injectModelIntoDom(model(
         project('a2', '2.0.0'),
@@ -29,7 +29,7 @@ describe('Dependency analysis', () => {
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(projectIds(store.getState())).toEqual(['a1', 'a2'])
+          expect(filteredProjectIds(store.getState())).toEqual(['a1', 'a2'])
         })
         .then(done, done.fail)
     })
@@ -83,14 +83,14 @@ describe('Dependency analysis', () => {
   describe('for each dependent library', () => {
     it('is presented in alphabetic order', done => {
       const store = createStore()
-      expect(libraryIds(store.getState())).toHaveLength(0)
+      expect(filteredLibraryIds(store.getState(), [])).toHaveLength(0)
       injectModelIntoDom(model(
         project('a1', '1.2.3', dependency('d2', '1.0.0'), dependency('d1', '2.0.0')),
         project('a2', '1.2.3', dependency('d3', '1.0.0'), dependency('d2', '2.0.0'))
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(libraryIds(store.getState())).toEqual(['d1', 'd2', 'd3'])
+          expect(filteredLibraryIds(store.getState(), ['a1', 'a2'])).toEqual(['d1', 'd2', 'd3'])
         })
         .then(done, done.fail)
     })

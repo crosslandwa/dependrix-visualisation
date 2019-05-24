@@ -1,5 +1,5 @@
 import createStore from '../../store'
-import { filteredDependencyMap, loadTree, projectIds, updateVersionLagFilter } from '../interactions'
+import { filteredDependencyMap, filteredProjectIds, loadTree, updateVersionLagFilter } from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, project, dependency, model } from './helpers'
 
 const dependencies = (store, projectId, libraryId) => {
@@ -79,7 +79,7 @@ describe('Dependency version comparison', () => {
       store.dispatch(loadTree())
         .then(() => {
           expect(dependencies(store, 'a1', 'd1')).toHaveLength(4)
-          expect(projectIds(store.getState())).toHaveLength(2)
+          expect(filteredProjectIds(store.getState())).toHaveLength(2)
         })
         .then(done, done.fail)
     })
@@ -94,7 +94,7 @@ describe('Dependency version comparison', () => {
       store.dispatch(loadTree())
         .then(() => {
           store.dispatch(updateVersionLagFilter(['major']))
-          expect(projectIds(store.getState())).toEqual(['a2', 'a3'])
+          expect(filteredProjectIds(store.getState())).toEqual(['a2', 'a3'])
         })
         .then(done, done.fail)
     })

@@ -1,15 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { filteredDependencyMap, projectIds, libraryIds } from './interactions'
+import { filteredDependencyMap, filteredLibraryIds, filteredProjectIds } from './interactions'
 import DependencyCell from './DependencyCell'
 import ProjectCell from './ProjectCell'
 
 const mapStateToProps = state => {
-  const filteredProjectIds = projectIds(state)
+  const projectIds = filteredProjectIds(state)
   return {
-    projectIds: filteredProjectIds,
-    libraryIds: libraryIds(state),
-    dependencyMap: filteredDependencyMap(state, filteredProjectIds)
+    projectIds,
+    libraryIds: filteredLibraryIds(state, projectIds),
+    dependencyMap: filteredDependencyMap(state, projectIds)
   }
 }
 
