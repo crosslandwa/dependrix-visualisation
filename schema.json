@@ -19,7 +19,8 @@
       "properties": {
         "version": {
           "type": "string",
-          "description": "The version of the project"
+          "description": "The version of the project",
+          "minLength": 1
         },
         "dependencies": {
           "type": "array",
@@ -35,11 +36,13 @@
       "properties": {
         "id": {
           "type": "string",
-          "description": "The unique identifier of the dependent library"
+          "description": "The unique identifier of the dependent library",
+          "minLength": 1
         },
         "version": {
           "type": "string",
-          "description": "The version of the dependent library"
+          "description": "The version of the dependent library",
+          "minLength": 1
         },
         "scope": {
           "type": "string",

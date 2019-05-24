@@ -31,7 +31,7 @@ describe('Dependrix', () => {
     Dependrix({ modelIsMissingProjects: {} })
       .then(html => done.fail('Expected validation error but built HTML returned'))
       .catch(error => {
-        expect(error).toContain('Supplied model failed validation')
+        expect(error.message).toContain('Supplied model failed validation')
       }).then(done)
   })
 })
