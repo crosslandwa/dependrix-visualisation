@@ -1,6 +1,11 @@
 import createStore from '../../store'
-import { dependencies, loadTree, projectIds, updateVersionLagFilter } from '../interactions'
+import { filteredDependencyMap, loadTree, projectIds, updateVersionLagFilter } from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, project, dependency, model } from './helpers'
+
+const dependencies = (store, projectId, libraryId) => {
+  const map = filteredDependencyMap(store.getState(), [projectId])
+  return map[projectId][libraryId]
+}
 
 describe('Dependency version comparison', () => {
   beforeEach(() => {
@@ -17,10 +22,10 @@ describe('Dependency version comparison', () => {
     ))
     store.dispatch(loadTree())
       .then(() => {
-        expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([
+        expect(dependencies(store, 'a1', 'd1')).toEqual([
           { id: 'd1', version: '1.0.0', versionLag: 'major', scope: '' }
         ])
-        expect(dependencies(store.getState(), 'a2', 'd1')).toEqual([
+        expect(dependencies(store, 'a2', 'd1')).toEqual([
           { id: 'd1', version: '2.0.0', versionLag: '', scope: '' }
         ])
       })
@@ -36,10 +41,10 @@ describe('Dependency version comparison', () => {
     ))
     store.dispatch(loadTree())
       .then(() => {
-        expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([
+        expect(dependencies(store, 'a1', 'd1')).toEqual([
           { id: 'd1', version: '1.0.0', versionLag: 'minor', scope: '' }
         ])
-        expect(dependencies(store.getState(), 'a2', 'd1')).toEqual([
+        expect(dependencies(store, 'a2', 'd1')).toEqual([
           { id: 'd1', version: '1.1.0', versionLag: '', scope: '' }
         ])
       })
@@ -54,10 +59,10 @@ describe('Dependency version comparison', () => {
     ))
     store.dispatch(loadTree())
       .then(() => {
-        expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([
+        expect(dependencies(store, 'a1', 'd1')).toEqual([
           { id: 'd1', version: '1.0.0', versionLag: 'patch', scope: '' }
         ])
-        expect(dependencies(store.getState(), 'a2', 'd1')).toEqual([
+        expect(dependencies(store, 'a2', 'd1')).toEqual([
           { id: 'd1', version: '1.0.1', versionLag: '', scope: '' }
         ])
       })
@@ -73,7 +78,7 @@ describe('Dependency version comparison', () => {
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(dependencies(store.getState(), 'a1', 'd1')).toHaveLength(4)
+          expect(dependencies(store, 'a1', 'd1')).toHaveLength(4)
           expect(projectIds(store.getState())).toHaveLength(2)
         })
         .then(done, done.fail)
@@ -102,12 +107,12 @@ describe('Dependency version comparison', () => {
       store.dispatch(loadTree())
         .then(() => {
           store.dispatch(updateVersionLagFilter(['major']))
-          expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([
+          expect(dependencies(store, 'a1', 'd1')).toEqual([
             { id: 'd1', version: '1.0.0', versionLag: 'major', scope: '' }
           ])
 
           store.dispatch(updateVersionLagFilter(['major', 'minor']))
-          expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([
+          expect(dependencies(store, 'a1', 'd1')).toEqual([
             { id: 'd1', version: '1.0.0', versionLag: 'major', scope: '' },
             { id: 'd1', version: '2.0.0', versionLag: 'minor', scope: '' }
           ])

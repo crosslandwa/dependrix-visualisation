@@ -1,7 +1,7 @@
 import createStore from '../../store'
 import {
   availableScopes,
-  dependencies,
+  filteredDependencyMap,
   libraryIds,
   loadTree,
   projectIds,
@@ -10,6 +10,11 @@ import {
   updateProjectFilter
 } from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, project, dependency, model } from './helpers'
+
+const dependencies = (store, projectId, libraryId) => {
+  const map = filteredDependencyMap(store.getState(), [projectId])
+  return map[projectId][libraryId]
+}
 
 describe('Filtering', () => {
   beforeEach(() => {
@@ -137,14 +142,14 @@ describe('Filtering', () => {
 
       store.dispatch(loadTree())
         .then(() => {
-          expect(dependencies(store.getState(), 'a1', 'd1')).toHaveLength(1)
-          expect(dependencies(store.getState(), 'a1', 'd3')).toHaveLength(1)
-          expect(dependencies(store.getState(), 'a2', 'd4')).toHaveLength(1)
+          expect(dependencies(store, 'a1', 'd1')).toHaveLength(1)
+          expect(dependencies(store, 'a1', 'd3')).toHaveLength(1)
+          expect(dependencies(store, 'a2', 'd4')).toHaveLength(1)
 
           store.dispatch(updateDependencyScopeFilter(['scope1', 'scope2']))
-          expect(dependencies(store.getState(), 'a1', 'd1')).toHaveLength(1)
-          expect(dependencies(store.getState(), 'a1', 'd3')).toHaveLength(0)
-          expect(dependencies(store.getState(), 'a2', 'd4')).toHaveLength(1)
+          expect(dependencies(store, 'a1', 'd1')).toHaveLength(1)
+          expect(dependencies(store, 'a1', 'd3')).toHaveLength(0)
+          expect(dependencies(store, 'a2', 'd4')).toHaveLength(1)
         })
         .then(done, done.fail)
     })

@@ -1,12 +1,17 @@
 import createStore from '../../store'
 import {
-  dependencies,
+  filteredDependencyMap,
   libraryIds,
   loadTree,
   projectIds,
   projectVersion
 } from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, project, dependency, model } from './helpers'
+
+const dependencies = (store, projectId, libraryId) => {
+  const map = filteredDependencyMap(store.getState(), [projectId])
+  return map[projectId][libraryId]
+}
 
 describe('Dependency analysis', () => {
   beforeEach(() => {
@@ -48,13 +53,13 @@ describe('Dependency analysis', () => {
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([
+          expect(dependencies(store, 'a1', 'd1')).toEqual([
             { id: 'd1', version: '1.0.0', scope: 'real-scope', versionLag: '' }
           ])
-          expect(dependencies(store.getState(), 'a1', 'd2')).toEqual([
+          expect(dependencies(store, 'a1', 'd2')).toEqual([
             { id: 'd2', version: '2.0.0', scope: 'test-scope', versionLag: '' }
           ])
-          expect(dependencies(store.getState(), 'a1', 'nonsenseDependencyId')).toHaveLength(0)
+          expect(dependencies(store, 'a1', 'nonsenseDependencyId')).not.toBeDefined()
         })
         .then(done, done.fail)
     })
@@ -66,7 +71,7 @@ describe('Dependency analysis', () => {
       ))
       store.dispatch(loadTree())
         .then(() => {
-          expect(dependencies(store.getState(), 'a1', 'd1')).toEqual([
+          expect(dependencies(store, 'a1', 'd1')).toEqual([
             { id: 'd1', version: '1.0.0', scope: 'real-scope', versionLag: 'major' },
             { id: 'd1', version: '2.0.0', scope: 'test-scope', versionLag: '' }
           ])

@@ -1,15 +1,19 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { projectIds, libraryIds } from './interactions'
+import { filteredDependencyMap, projectIds, libraryIds } from './interactions'
 import DependencyCell from './DependencyCell'
 import ProjectCell from './ProjectCell'
 
-const mapStateToProps = state => ({
-  projectIds: projectIds(state),
-  libraryIds: libraryIds(state)
-})
+const mapStateToProps = state => {
+  const filteredProjectIds = projectIds(state)
+  return {
+    projectIds: filteredProjectIds,
+    libraryIds: libraryIds(state),
+    dependencyMap: filteredDependencyMap(state, filteredProjectIds)
+  }
+}
 
-const DependencyMatrix = ({ projectIds, libraryIds }) => (
+const DependencyMatrix = ({ projectIds, libraryIds, dependencyMap }) => (
   <div class="matrix__table-wrapper">
     <table class="matrix__table">
       <thead>
@@ -25,7 +29,7 @@ const DependencyMatrix = ({ projectIds, libraryIds }) => (
         {libraryIds.map(libraryId => (
           <tr>
             <td class="matrix__table-cell matrix__table-cell--lh-column">{libraryId}</td>
-            {projectIds.map(projectId => <DependencyCell projectId={projectId} libraryId={libraryId}/>)}
+            {projectIds.map(projectId => <DependencyCell dependencies={(dependencyMap[projectId][libraryId]) || []} />)}
           </tr>
         ))}
       </tbody>

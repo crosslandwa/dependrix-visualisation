@@ -35,9 +35,23 @@ export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'suc
 export const projectIds = state => Object.keys(state.projects).filter(isProjectAllowedByFilters(state)).sort()
 export const projectVersion = (state, projectId) => state.projects[projectId].version
 const projectDependencies = (state, projectId) => state.projects[projectId].dependencies
-export const dependencies = (state, projectId, libraryId) => projectDependencies(state, projectId)
-  .filter(dependency => dependency.id === libraryId)
-  .filter(isDependencyAllowedByFilters(state))
+
+export const filteredDependencyMap = (state, projectIds) => {
+  const dependencyFilter = isDependencyAllowedByFilters(state)
+  return projectIds.reduce(
+    (acc, projectId) => ({
+      ...acc,
+      [projectId]: projectDependencies(state, projectId).reduce(
+        (filtered, dependency) => ({
+          ...filtered,
+          [dependency.id]: (filtered[dependency.id] || []).concat([dependency].filter(dependencyFilter))
+        }),
+        {}
+      )
+    }),
+    {}
+  )
+}
 
 export const availableVersionLags = (state) => ['major', 'minor', 'patch']
 export const availableScopes = (state) => state.dependencyScopes
