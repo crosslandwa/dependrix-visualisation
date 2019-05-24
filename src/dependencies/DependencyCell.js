@@ -5,7 +5,7 @@ const DependencyCell = ({ dependencies }) => (
     {dependencies.map(({ scope, version, versionLag }) => (
       <React.Fragment>
         <span class={`matrix__table-cell-label${versionLag ? ` matrix__table-cell-label--${versionLag}` : ''}`}>{version}</span>
-        <span class="matrix__table-cell-label">{scope}</span>
+        {scope && <span class="matrix__table-cell-label">{scope}</span>}
       </React.Fragment>
     ))}
   </td>
