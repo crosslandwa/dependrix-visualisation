@@ -26,4 +26,12 @@ describe('Dependrix', () => {
         }).then(done, done.fail)
     })
   })
+
+  it('returns an error if the supplied JSON does not satisfy the model schema', done => {
+    Dependrix({ modelIsMissingProjects: {} })
+      .then(html => done.fail('Expected validation error but built HTML returned'))
+      .catch(error => {
+        expect(error).toContain('Supplied model failed validation')
+      }).then(done)
+  })
 })

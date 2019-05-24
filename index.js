@@ -1,14 +1,21 @@
-const fs = require('fs')
+import fs from 'fs'
+import Ajv from 'ajv'
+
+
 
 const readFile = filename => new Promise((resolve, reject) => fs.readFile(
   filename,
   (err, data) => err ? reject(err) : resolve(data.toString('utf-8'))
 ))
 
-export default (model) => Promise.all([
-  readFile(`${__dirname}/dist/index.html`),
-  readFile(`${__dirname}/dist/bundle.min.js`)
-])
+export default (model) => new Promise((resolve, reject) => {
+  const validateAgainstSchema = new Ajv().compile(JSON.parse(fs.readFileSync(`${__dirname}/schema.json`, 'utf8')))
+  return validateAgainstSchema(model) ? resolve() : reject(`Supplied model failed validation: ${JSON.stringify(validateAgainstSchema.errors)}`)
+})
+  .then(() => Promise.all([
+    readFile(`${__dirname}/dist/index.html`),
+    readFile(`${__dirname}/dist/bundle.min.js`)
+  ]))
   .then(insertBundleJsInline)
   .then(stripSourceMapping)
   .then(injectModelAsJSON(model))
