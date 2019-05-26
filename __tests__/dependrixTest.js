@@ -1,8 +1,8 @@
-import Dependrix from '..'
+import { buildStandaloneHTML } from '..'
 
 describe('Dependrix', () => {
-  describe('creates an application', () => {
-    const dependrix = Dependrix({ projects: {} })
+  describe('creates a standalone HTML application', () => {
+    const dependrix = buildStandaloneHTML({ projects: {} })
 
     it('with the JS application inlined', done => {
       dependrix.then(html => {
@@ -27,8 +27,8 @@ describe('Dependrix', () => {
     })
   })
 
-  it('returns an error if the supplied JSON does not satisfy the model schema', done => {
-    Dependrix({ modelIsMissingProjects: {} })
+  it('that returns an error if the supplied JSON does not satisfy the model schema', done => {
+    buildStandaloneHTML({ modelIsMissingProjects: {} })
       .then(html => done.fail('Expected validation error but built HTML returned'))
       .catch(error => {
         expect(error.message).toContain('Supplied model failed validation')

@@ -1,12 +1,12 @@
-import fs from 'fs'
-import Ajv from 'ajv'
+const fs = require('fs')
+const Ajv = require('ajv')
 
 const readFile = filename => new Promise((resolve, reject) => fs.readFile(
   filename,
   (err, data) => err ? reject(err) : resolve(data.toString('utf-8'))
 ))
 
-export default (model) => new Promise((resolve, reject) => {
+const buildStandaloneHTML = (model) => new Promise((resolve, reject) => {
   const validateAgainstSchema = new Ajv().compile(JSON.parse(fs.readFileSync(`${__dirname}/schema.json`, 'utf8')))
   return validateAgainstSchema(model) ? resolve() : reject(new Error(`Supplied model failed validation: ${JSON.stringify(validateAgainstSchema.errors)}`))
 })
@@ -29,3 +29,8 @@ const injectModelAsJSON = model => html => html.replace(
   '</head>',
   `<script type="application/json" id="modelled-dependencies">\n${JSON.stringify(model, null, 2)}\n</script>\n</head>`
 )
+
+
+module.exports = {
+  buildStandaloneHTML
+}
