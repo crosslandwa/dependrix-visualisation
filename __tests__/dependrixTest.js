@@ -25,13 +25,13 @@ describe('Dependrix', () => {
           expect(headElementContent).toMatch(/<script type="application\/json" id="modelled-dependencies">\s*{\s+"projects": {}\s+}\s+<\/script>\s*<\/head>/)
         }).then(done, done.fail)
     })
-  })
 
-  it('that returns an error if the supplied JSON does not satisfy the model schema', done => {
-    buildStandaloneHTML({ modelIsMissingProjects: {} })
-      .then(html => done.fail('Expected validation error but built HTML returned'))
-      .catch(error => {
-        expect(error.message).toContain('Supplied model failed validation')
-      }).then(done)
+    it('that returns an error if the supplied JSON does not satisfy the model schema', done => {
+      buildStandaloneHTML({ modelIsMissingProjects: {} })
+        .then(html => done.fail('Expected validation error but built HTML returned'))
+        .catch(error => {
+          expect(error.message).toContain('Supplied model failed validation')
+        }).then(done)
+    })
   })
 })

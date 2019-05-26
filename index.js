@@ -6,10 +6,7 @@ const readFile = filename => new Promise((resolve, reject) => fs.readFile(
   (err, data) => err ? reject(err) : resolve(data.toString('utf-8'))
 ))
 
-const buildStandaloneHTML = (model) => new Promise((resolve, reject) => {
-  const validateAgainstSchema = new Ajv().compile(JSON.parse(fs.readFileSync(`${__dirname}/schema.json`, 'utf8')))
-  return validateAgainstSchema(model) ? resolve() : reject(new Error(`Supplied model failed validation: ${JSON.stringify(validateAgainstSchema.errors)}`))
-})
+const buildStandaloneHTML = (model) => validateModel(model)
   .then(() => Promise.all([
     readFile(`${__dirname}/dist/index.html`),
     readFile(`${__dirname}/dist/bundle.min.js`)
@@ -30,7 +27,12 @@ const injectModelAsJSON = model => html => html.replace(
   `<script type="application/json" id="modelled-dependencies">\n${JSON.stringify(model, null, 2)}\n</script>\n</head>`
 )
 
+const validateModel = (model) => readFile(`${__dirname}/schema.json`)
+  .then(JSON.parse)
+  .then(schema => new Ajv().compile(schema))
+  .then(validateAgainstSchema => validateAgainstSchema(model)
+    ? Promise.resolve(model)
+    : Promise.reject(new Error(`Supplied model failed validation: ${JSON.stringify(validateAgainstSchema.errors)}`))
+  )
 
-module.exports = {
-  buildStandaloneHTML
-}
+module.exports = { buildStandaloneHTML, validateModel }
