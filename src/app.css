@@ -41,8 +41,16 @@
   text-align: center;
 }
 
+.matrix__dependency-detail {
+  margin: 0.25em 0;
+}
+
 .matrix__table-cell-label {
   display: block;
+}
+
+.matrix__table-cell-divide {
+  margin: 0 1em;
 }
 
 .matrix__table-cell-label--major::before {
