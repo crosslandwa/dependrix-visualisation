@@ -6,10 +6,12 @@
   "properties": {
     "projects": {
       "type": "object",
-      "patternProperties": {
-        "^[a-zA-Z_$][0-9a-zA-Z_$-]*$": { "$ref": "#/definitions/project" }
+      "propertyNames": {
+        "pattern": "^[a-zA-Z_$][0-9a-zA-Z_$-]*$"
       },
-      "additionalProperties": false
+      "patternProperties": {
+        "^.+$": { "$ref": "#/definitions/project" }
+      }
     }
   },
   "definitions": {
@@ -37,7 +39,7 @@
         "id": {
           "type": "string",
           "description": "The unique identifier of the dependent library",
-          "minLength": 1
+          "pattern": "^[a-zA-Z_$][0-9a-zA-Z_$-]*$"
         },
         "version": {
           "type": "string",
