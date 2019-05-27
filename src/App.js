@@ -1,19 +1,19 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import './app.css'
-import { analysisTitle, hasTreeLoadedSuccessfully } from './dependencies/interactions'
+import { hasTreeLoadedSuccessfully } from './dependencies/interactions'
 import LoadSummary from './dependencies/LoadSummary'
 import DependencyMatrix from './dependencies/DependencyMatrix'
 import Filters from './filter'
+import PageTitle from './PageTitle'
 
 const mapStateToProps = state => ({
-  loaded: hasTreeLoadedSuccessfully(state),
-  pageTitle: analysisTitle(state)
+  loaded: hasTreeLoadedSuccessfully(state)
 })
 
-const App = ({ loaded, pageTitle }) => (
+const App = ({ loaded }) => (
   <React.Fragment>
-    <h1 class="header--xl">{pageTitle}</h1>
+    <PageTitle />
     <Filters dependenciesLoaded={loaded} />
     {!loaded && <LoadSummary />}
     {loaded && <DependencyMatrix />}
