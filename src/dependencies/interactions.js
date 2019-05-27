@@ -52,7 +52,7 @@ export const filteredDependencyMap = (state, projectIds) => {
     {}
   )
 }
-
+export const latestLibraryVersions = state => state.latestLibraryVersions
 export const availableVersionLags = (state) => ['major', 'minor', 'patch']
 export const availableScopes = (state) => state.dependencyScopes
 export const filteredLibraryIds = (state, projectIds) => {
@@ -128,6 +128,14 @@ export const dependencyScopesReducer = (state = [], action) => {
   switch (action.type) {
     case 'TREE_LOAD_SUCCESS':
       return action.data.dependencyScopes
+  }
+  return state
+}
+
+export const latestLibraryVersionsReducer = (state = {}, action) => {
+  switch (action.type) {
+    case 'TREE_LOAD_SUCCESS':
+      return action.data.latestLibraryVersions
   }
   return state
 }

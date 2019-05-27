@@ -1,5 +1,5 @@
 import createStore from '../../store'
-import { filteredDependencyMap, filteredProjectIds, loadTree, updateVersionLagFilter } from '../interactions'
+import { filteredDependencyMap, filteredProjectIds, latestLibraryVersions, loadTree, updateVersionLagFilter } from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, project, dependency, model } from './helpers'
 
 const dependencies = (store, projectId, libraryId) => {
@@ -10,6 +10,21 @@ const dependencies = (store, projectId, libraryId) => {
 describe('Dependency version comparison', () => {
   beforeEach(() => {
     clearModelFromDom()
+  })
+
+  it('identifies the latest version of each dependent library', done => {
+    const store = createStore()
+    injectModelIntoDom(model(
+      project('a1', '1.2.3', dependency('d1', '1.0.0'), dependency('d1', '2.0.0'), dependency('d2', '3.0.0'))
+    ))
+    store.dispatch(loadTree())
+      .then(() => {
+        expect(latestLibraryVersions(store.getState())).toEqual({
+          d1: '2.0.0',
+          d2: '3.0.0'
+        })
+      })
+      .then(done, done.fail)
   })
 
   it('identifies when a dependent library is a major version behind the version used in another project', done => {

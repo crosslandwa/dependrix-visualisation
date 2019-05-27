@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { filteredDependencyMap, filteredLibraryIds, filteredProjectIds } from './interactions'
+import { filteredDependencyMap, filteredLibraryIds, filteredProjectIds, latestLibraryVersions } from './interactions'
 import DependencyCell from './DependencyCell'
 import ProjectCell from './ProjectCell'
 
@@ -9,11 +9,12 @@ const mapStateToProps = state => {
   return {
     projectIds,
     libraryIds: filteredLibraryIds(state, projectIds),
-    dependencyMap: filteredDependencyMap(state, projectIds)
+    dependencyMap: filteredDependencyMap(state, projectIds),
+    latestLibraryVersions: latestLibraryVersions(state)
   }
 }
 
-const DependencyMatrix = ({ projectIds, libraryIds, dependencyMap }) => (
+const DependencyMatrix = ({ projectIds, libraryIds, dependencyMap, latestLibraryVersions }) => (
   <div class="matrix__table-wrapper">
     <table class="matrix__table">
       <thead>
@@ -28,7 +29,10 @@ const DependencyMatrix = ({ projectIds, libraryIds, dependencyMap }) => (
       <tbody>
         {libraryIds.map(libraryId => (
           <tr>
-            <td class="matrix__table-cell matrix__table-cell--lh-column">{libraryId}</td>
+            <td class="matrix__table-cell matrix__table-cell--lh-column">
+              <span class="matrix__table-cell-label">{libraryId}</span>
+              <span class="matrix__table-cell-label">(latest: {latestLibraryVersions[libraryId]})</span>
+            </td>
             {projectIds.map(projectId => <DependencyCell dependencies={(dependencyMap[projectId][libraryId]) || []} />)}
           </tr>
         ))}
