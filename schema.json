@@ -12,7 +12,8 @@
       "patternProperties": {
         "^.+$": { "$ref": "#/definitions/project" }
       }
-    }
+    },
+    "analysis" : { "$ref": "#/definitions/analysis" }
   },
   "definitions": {
     "project": {
@@ -49,6 +50,18 @@
         "scope": {
           "type": "string",
           "description": "[Optional] description of the scope (e.g. test, compile, etc) of the dependent library"
+        }
+      },
+      "additionalProperties": false
+    },
+    "analysis": {
+      "type": "object",
+      "required": [ "title" ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The page title to use for the dependency analysis",
+          "minLength": 1
         }
       },
       "additionalProperties": false

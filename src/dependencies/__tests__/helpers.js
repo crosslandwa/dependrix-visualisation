@@ -13,10 +13,15 @@ export const injectModelIntoDom = model => {
 
 export const project = (id, version, ...dependencies) => ({ id, version, dependencies })
 export const dependency = (id, version, scope) => ({ id, version, scope })
-export const model = (...projects) => {
+export const model = (...projects) => modelWithTitle('', ...projects)
+
+export const modelWithTitle = (title, ...projects) => {
   const model = projects.reduce(
-    (acc, { id, dependencies, version }) => ({ projects: { ...acc.projects, [id]: { version, dependencies } } }),
-    { projects: {} }
+    (acc, { id, dependencies, version }) => ({
+      analysis: acc.analysis,
+      projects: { ...acc.projects, [id]: { version, dependencies } }
+    }),
+    title ? { projects: {}, analysis: { title } } : { projects: {} }
   )
   if (!validateAgainstSchema(model)) {
     throw new Error(`Supplied model failed validation: ${JSON.stringify(validateAgainstSchema.errors)}`)

@@ -17,6 +17,9 @@ describe('Dependrix model validation', () => {
             }
           ]
         }
+      },
+      analysis: {
+        title: 'my analysis'
       }
     }
     validateModel(model)

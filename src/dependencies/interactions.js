@@ -32,6 +32,8 @@ const sanitiseSearch = search => search.toLowerCase().split(',').map(x => x.trim
 export const hasTreeLoadBeenAttempted = state => !!state.tree.loadStatus
 export const hasTreeLoadedSuccessfully = state => state.tree.loadStatus === 'success'
 
+export const analysisTitle = state => state.analysis.title
+
 export const filteredProjectIds = state => Object.keys(state.projects).filter(isProjectAllowedByFilters(state)).sort()
 export const projectVersion = (state, projectId) => state.projects[projectId].version
 const projectDependencies = (state, projectId) => state.projects[projectId].dependencies
@@ -154,6 +156,14 @@ export const filtersReducer = (state = { projectSearch: [], librarySearch: [], s
   return state
 }
 
+export const analysisReducer = (state = { title: 'Dependrix' }, action) => {
+  switch (action.type) {
+    case 'TREE_LOAD_SUCCESS':
+      return action.data.analysis ? { title: action.data.analysis.title } : state
+  }
+  return state
+}
+
 // ------ MIDDLEWARE ------
 export function treeLoadMiddleware (store) {
   return (next) => (action) => {
@@ -161,6 +171,7 @@ export function treeLoadMiddleware (store) {
       case 'LOAD_TREE':
         const dispatchLoadedTree = data => {
           next(treeLoadedSuccessfully({
+            analysis: data.analysis,
             projects: data.projects,
             dependencyScopes: parseScopes(data),
             latestLibraryVersions: parseLatestLibraryVersions(data)
