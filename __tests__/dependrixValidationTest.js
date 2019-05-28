@@ -7,11 +7,11 @@ describe('Dependrix model validation', () => {
   it('returns a promise that resolves with the supplied model if it is valid', done => {
     const model = {
       projects: {
-        'a-project:with.valid-chars': {
+        'a-project:with.valid@chars/': {
           version: '1.0.0',
           dependencies: [
             {
-              id: 'lib-a:with.valid-chars',
+              id: 'lib-a:with.valid@chars/',
               version: '1',
               scope: 'some-scope'
             }
@@ -36,10 +36,10 @@ describe('Dependrix model validation', () => {
   })
 
   it('returns an error when project names contain invalid characters', done => {
-    const model = { projects: { '0badProjectName': {} } }
+    const model = { projects: { 'badProjectName?': {} } }
     validateModel(model)
       .then(failTestAsValidationFailureExpected(done.fail))
-      .catch(expectErrorMessageToContain("property name '0badProjectName' is invalid"))
+      .catch(expectErrorMessageToContain("property name 'badProjectName?' is invalid"))
       .then(done)
   })
 
