@@ -1,6 +1,6 @@
 {
   "name": "dependrix-visualisation",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Visual and compare dependencies across multiple projects",
   "main": "index.js",
   "scripts": {
