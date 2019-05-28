@@ -7,11 +7,11 @@ describe('Dependrix model validation', () => {
   it('returns a promise that resolves with the supplied model if it is valid', done => {
     const model = {
       projects: {
-        'a-project': {
+        'a-project:with.valid-chars': {
           version: '1.0.0',
           dependencies: [
             {
-              id: 'lib-a',
+              id: 'lib-a:with.valid-chars',
               version: '1',
               scope: 'some-scope'
             }
@@ -102,7 +102,7 @@ describe('Dependrix model validation', () => {
           version: '1',
           dependencies: [
             {
-              id: '0-bad-lib',
+              id: '?-bad-lib',
               version: '1'
             }
           ]
@@ -111,7 +111,7 @@ describe('Dependrix model validation', () => {
     }
     validateModel(model)
       .then(failTestAsValidationFailureExpected(done.fail))
-      .catch(expectErrorMessageToContain('should match pattern \\"^[a-zA-Z_$][0-9a-zA-Z_$-]*$\\"'))
+      .catch(expectErrorMessageToContain(".projects['myProject'].dependencies[0].id"))
       .then(done)
   })
 })

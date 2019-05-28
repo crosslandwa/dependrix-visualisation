@@ -7,7 +7,7 @@
     "projects": {
       "type": "object",
       "propertyNames": {
-        "pattern": "^[a-zA-Z_$][0-9a-zA-Z_$-]*$"
+        "pattern": "^[a-zA-Z_$][0-9a-zA-Z_$-.:]*$"
       },
       "patternProperties": {
         "^.+$": { "$ref": "#/definitions/project" }
@@ -40,7 +40,7 @@
         "id": {
           "type": "string",
           "description": "The unique identifier of the dependent library",
-          "pattern": "^[a-zA-Z_$][0-9a-zA-Z_$-]*$"
+          "pattern": "^[a-zA-Z_$][0-9a-zA-Z_$-.:]*$"
         },
         "version": {
           "type": "string",
