@@ -1,9 +1,9 @@
 # dependrix-visualisation
-Visual and compare library usage across multiple projects
+Visualise and compare library usage across multiple projects
 
 ## Setup your own dependrix visualisation
 
-Dependrix visualises cross-project dependencies using a model as described by `schema.json`. You can generate a model yourself, or make use of the following:
+Dependrix visualises cross-project dependencies using a model as described by [schema.json](schema.json). You can generate a model yourself, or make use of the following:
 - [dependrix-maven](https://github.com/crosslandwa/dependrix-maven)
 - [dependrix-npm](https://github.com/crosslandwa/dependrix-npm)
 
