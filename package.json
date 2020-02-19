@@ -4,13 +4,18 @@
   "description": "Visual and compare dependencies across multiple projects",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c",
+    "build": "npm run prepare",
     "lint": "eslint .",
+    "prepare": "rm -f dist/bundle* && rollup -c",
     "test": "jest .*Test.js",
-    "watch": "npm run build -- --watch"
+    "watch": "rollup -c --watch"
   },
   "author": "https://github.com/crosslandwa",
   "license": "ISC",
+  "files": [
+    "dist/bundle.min.js",
+    "dist/index.html"
+  ],
   "dependencies": {
     "ajv": "^6.10.2",
     "browser-request": "^0.3.3",
