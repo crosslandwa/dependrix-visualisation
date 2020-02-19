@@ -6,7 +6,8 @@
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint .",
-    "test": "jest .*Test.js"
+    "test": "jest .*Test.js",
+    "watch": "npm run build -- --watch"
   },
   "author": "https://github.com/crosslandwa",
   "license": "ISC",
