@@ -14,4 +14,8 @@ ReactDOM.render(
   document.getElementById('app')
 )
 
-store.dispatch(loadTree())
+// dispatch must happen async to ensure initial render occurs before attempt to load/parse data
+setTimeout(
+  () => store.dispatch(loadTree()),
+  100
+)
