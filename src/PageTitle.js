@@ -6,7 +6,7 @@ const mapStateToProps = state => ({
   pageTitle: analysisTitle(state)
 })
 
-const PageTitle = ({ loaded, pageTitle }) => {
+const PageTitle = ({ pageTitle }) => {
   document.title = pageTitle
   return <h1 class="header--xl">{pageTitle}</h1>
 }
