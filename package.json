@@ -14,7 +14,8 @@
   "license": "ISC",
   "files": [
     "dist/bundle.min.js",
-    "dist/index.html"
+    "dist/index.html",
+    "schema.json"
   ],
   "dependencies": {
     "ajv": "^6.10.2",
