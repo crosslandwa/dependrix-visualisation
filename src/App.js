@@ -14,7 +14,7 @@ const mapStateToProps = state => ({
 const App = ({ loaded }) => (
   <React.Fragment>
     <PageTitle />
-    <Filters dependenciesLoaded={loaded} />
+    {loaded && <Filters />}
     {!loaded && <LoadSummary />}
     {loaded && <DependencyMatrix />}
   </React.Fragment>

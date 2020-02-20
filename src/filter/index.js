@@ -4,8 +4,8 @@ import ProjectFilter from './ProjectFilter'
 import ScopeFilter from './ScopeFilter'
 import VersionLagFilter from './VersionLagFilter'
 
-const Filters = ({ dependenciesLoaded }) => (
-  <details class="details" open={!!dependenciesLoaded}>
+const Filters = () => (
+  <details class="details" open={true}>
     <summary class="details__summary">Filters</summary>
     <div class="details__reveal">
       <ProjectFilter />
