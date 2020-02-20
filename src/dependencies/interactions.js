@@ -7,6 +7,7 @@ const passAlways = () => true
 
 // ------ ACTIONS ------
 export const loadTree = () => ({ type: 'LOAD_TREE' })
+export const toggleDependencyScopeFilter = (scope) => ({ type: 'TOGGLE_DEPENDENCY_SCOPE_FILTER', scope })
 const treeLoadedSuccessfully = data => ({ type: 'TREE_LOAD_SUCCESS', data })
 const treeLoadFailed = () => ({ type: 'TREE_LOAD_FAILED' })
 export const updateProjectFilter = (search) => ({
@@ -17,7 +18,7 @@ export const updateLibraryFilter = (search) => ({
   type: 'UPDATE_LIBRARY_FILTER',
   search: sanitiseSearch(search)
 })
-export const updateDependencyScopeFilter = (selectedScopes = []) => ({
+const updateDependencyScopeFilter = (selectedScopes = []) => ({
   type: 'UPDATE_DEPENDENCY_SCOPE_FILTER',
   selectedScopes
 })
@@ -66,10 +67,10 @@ export const filteredLibraryIds = (state, projectIds) => {
     )
   ), []).sort()
 }
-
+const selectedScopes = (state) => state.filters.selectedScopes
 const isProjectAllowedByFilters = (state) => {
   const bySearch = bySearchTerms(state.filters.projectSearch)
-  const dependencyFiltersActive = !!(state.filters.librarySearch.length || state.filters.selectedScopes.length || state.filters.selectedVersionLags.length)
+  const dependencyFiltersActive = !!(state.filters.librarySearch.length || selectedScopes(state).length || state.filters.selectedVersionLags.length)
   const byDependencies = dependencyFiltersActive
     ? projectId => projectDependencies(state, projectId).some(isDependencyAllowedByFilters(state))
     : passAlways
@@ -78,8 +79,8 @@ const isProjectAllowedByFilters = (state) => {
 
 const isDependencyAllowedByFilters = (state) => {
   const bySearch = bySearchTerms(state.filters.librarySearch)
-  const byScope = state.filters.selectedScopes.length
-    ? scope => state.filters.selectedScopes.includes(scope)
+  const byScope = selectedScopes(state).length
+    ? scope => selectedScopes(state).includes(scope)
     : passAlways
   const byVersionLag = state.filters.selectedVersionLags.length
     ? versionLag => state.filters.selectedVersionLags.includes(versionLag)
@@ -165,7 +166,7 @@ export const analysisReducer = (state = { title: 'Dependrix' }, action) => {
 }
 
 // ------ MIDDLEWARE ------
-export function treeLoadMiddleware (store) {
+export function treeLoadMiddleware ({ getState }) {
   return (next) => (action) => {
     switch (action.type) {
       case 'LOAD_TREE':
@@ -190,6 +191,12 @@ export function treeLoadMiddleware (store) {
         ))
           .catch(e => makeGETRequest('modelled-dependencies.json').then(JSON.parse)) // load from server if not in DOM
           .then(dispatchLoadedTree, dispatchLoadFailure)
+      case 'TOGGLE_DEPENDENCY_SCOPE_FILTER':
+        const currentScopes = selectedScopes(getState())
+        const updatedScopes = currentScopes.includes(action.scope)
+          ? currentScopes.filter(scope => scope !== action.scope)
+          : currentScopes.concat(action.scope)
+        return next(updateDependencyScopeFilter(updatedScopes))
     }
     return next(action)
   }

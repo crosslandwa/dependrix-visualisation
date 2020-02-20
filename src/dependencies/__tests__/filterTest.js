@@ -5,7 +5,7 @@ import {
   filteredLibraryIds,
   filteredProjectIds,
   loadTree,
-  updateDependencyScopeFilter,
+  toggleDependencyScopeFilter,
   updateLibraryFilter,
   updateProjectFilter
 } from '../interactions'
@@ -102,33 +102,40 @@ describe('Filtering', () => {
     })
 
     it('is supported for a single scope', done => {
-      const store = createStore()
+      const { dispatch, getState } = createStore()
       injectModelIntoDom(model(
         project('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2'), dependency('d3', '1.0.0', 'scope2'))
       ))
 
-      store.dispatch(loadTree())
+      dispatch(loadTree())
         .then(() => {
-          store.dispatch(updateDependencyScopeFilter(['scope2']))
-          expect(filteredLibraryIds(store.getState(), ['a1'])).toEqual(['d2', 'd3'])
+          dispatch(toggleDependencyScopeFilter('scope2')) // turn on scope2 filtering
+          expect(filteredLibraryIds(getState(), ['a1'])).toEqual(['d2', 'd3'])
 
-          store.dispatch(updateDependencyScopeFilter())
-          expect(filteredLibraryIds(store.getState(), ['a1'])).toEqual(['d1', 'd2', 'd3'])
+          dispatch(toggleDependencyScopeFilter('scope2')) // turn off scope2 filtering
+          expect(filteredLibraryIds(getState(), ['a1'])).toEqual(['d1', 'd2', 'd3'])
         })
         .then(done, done.fail)
     })
 
     it('is supported for a multiple scopes at the same time', done => {
-      const store = createStore()
+      const { dispatch, getState } = createStore()
       injectModelIntoDom(model(
         project('a1', '1.0.0', dependency('d1', '1.0.0', 'scope1'), dependency('d2', '1.0.0', 'scope2'), dependency('d3', '1.0.0', 'scope3')),
         project('a2', '1.0.0', dependency('d4', '1.0.0', 'scope2'))
       ))
 
-      store.dispatch(loadTree())
+      dispatch(loadTree())
         .then(() => {
-          store.dispatch(updateDependencyScopeFilter(['scope1', 'scope2']))
-          expect(filteredLibraryIds(store.getState(), ['a1', 'a2'])).toEqual(['d1', 'd2', 'd4'])
+          dispatch(toggleDependencyScopeFilter('scope1')) // turn on 'scope1' filtering
+          dispatch(toggleDependencyScopeFilter('scope2')) // turn on 'scope1' filtering
+          expect(filteredLibraryIds(getState(), ['a1', 'a2'])).toEqual(['d1', 'd2', 'd4'])
+
+          dispatch(toggleDependencyScopeFilter('scope1')) // remove 'scope1' from filters
+          expect(filteredLibraryIds(getState(), ['a1', 'a2'])).toEqual(['d2', 'd4'])
+
+          dispatch(toggleDependencyScopeFilter('scope1')) // add 'scope1' back into filters
+          expect(filteredLibraryIds(getState(), ['a1', 'a2'])).toEqual(['d1', 'd2', 'd4'])
         })
         .then(done, done.fail)
     })
@@ -146,7 +153,8 @@ describe('Filtering', () => {
           expect(dependencies(store, 'a1', 'd3')).toHaveLength(1)
           expect(dependencies(store, 'a2', 'd4')).toHaveLength(1)
 
-          store.dispatch(updateDependencyScopeFilter(['scope1', 'scope2']))
+          store.dispatch(toggleDependencyScopeFilter('scope1'))
+          store.dispatch(toggleDependencyScopeFilter('scope2'))
           expect(dependencies(store, 'a1', 'd1')).toHaveLength(1)
           expect(dependencies(store, 'a1', 'd3')).toHaveLength(0)
           expect(dependencies(store, 'a2', 'd4')).toHaveLength(1)
