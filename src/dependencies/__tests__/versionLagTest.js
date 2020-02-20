@@ -1,5 +1,5 @@
 import createStore from '../../store'
-import { filteredDependencyMap, filteredProjectIds, latestLibraryVersions, loadTree, updateVersionLagFilter } from '../interactions'
+import { filteredDependencyMap, filteredProjectIds, latestLibraryVersions, loadTree, toggleVersionLagFilter } from '../interactions'
 import { clearModelFromDom, injectModelIntoDom, project, dependency, model } from './helpers'
 
 const dependencies = (store, projectId, libraryId) => {
@@ -100,16 +100,19 @@ describe('Dependency version comparison', () => {
     })
 
     it('to only show projects with dependencis on libraries that have the specified version lag', done => {
-      const store = createStore()
+      const { dispatch, getState } = createStore()
       injectModelIntoDom(model(
         project('a1', '1.2.3', dependency('d1', '2.1.1')),
         project('a2', '1.2.3', dependency('d1', '1.1.1')),
         project('a3', '1.2.3', dependency('d1', '1.1.1'))
       ))
-      store.dispatch(loadTree())
+      dispatch(loadTree())
         .then(() => {
-          store.dispatch(updateVersionLagFilter(['major']))
-          expect(filteredProjectIds(store.getState())).toEqual(['a2', 'a3'])
+          dispatch(toggleVersionLagFilter('major')) // turn on
+          expect(filteredProjectIds(getState())).toEqual(['a2', 'a3'])
+
+          dispatch(toggleVersionLagFilter('major')) // turn off
+          expect(filteredProjectIds(getState())).toEqual(['a1', 'a2', 'a3'])
         })
         .then(done, done.fail)
     })
@@ -121,12 +124,12 @@ describe('Dependency version comparison', () => {
       ))
       store.dispatch(loadTree())
         .then(() => {
-          store.dispatch(updateVersionLagFilter(['major']))
+          store.dispatch(toggleVersionLagFilter('major'))
           expect(dependencies(store, 'a1', 'd1')).toEqual([
             { id: 'd1', version: '1.0.0', versionLag: 'major', scope: '' }
           ])
 
-          store.dispatch(updateVersionLagFilter(['major', 'minor']))
+          store.dispatch(toggleVersionLagFilter('minor'))
           expect(dependencies(store, 'a1', 'd1')).toEqual([
             { id: 'd1', version: '1.0.0', versionLag: 'major', scope: '' },
             { id: 'd1', version: '2.0.0', versionLag: 'minor', scope: '' }

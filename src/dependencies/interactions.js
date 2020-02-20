@@ -8,6 +8,7 @@ const passAlways = () => true
 // ------ ACTIONS ------
 export const loadTree = () => ({ type: 'LOAD_TREE' })
 export const toggleDependencyScopeFilter = (scope) => ({ type: 'TOGGLE_DEPENDENCY_SCOPE_FILTER', scope })
+export const toggleVersionLagFilter = (scope) => ({ type: 'TOGGLE_VERSION_SCOPE_FILTER', scope })
 const treeLoadedSuccessfully = data => ({ type: 'TREE_LOAD_SUCCESS', data })
 const treeLoadFailed = () => ({ type: 'TREE_LOAD_FAILED' })
 export const updateProjectFilter = (search) => ({
@@ -22,7 +23,7 @@ const updateDependencyScopeFilter = (selectedScopes = []) => ({
   type: 'UPDATE_DEPENDENCY_SCOPE_FILTER',
   selectedScopes
 })
-export const updateVersionLagFilter = (selectedVersionLags = []) => ({
+const updateVersionLagFilter = (selectedVersionLags = []) => ({
   type: 'UPDATE_VERSION_LAG_FILTER',
   selectedVersionLags
 })
@@ -68,9 +69,10 @@ export const filteredLibraryIds = (state, projectIds) => {
   ), []).sort()
 }
 const selectedScopes = (state) => state.filters.selectedScopes
+const selectedVersionLags = (state) => state.filters.selectedVersionLags
 const isProjectAllowedByFilters = (state) => {
   const bySearch = bySearchTerms(state.filters.projectSearch)
-  const dependencyFiltersActive = !!(state.filters.librarySearch.length || selectedScopes(state).length || state.filters.selectedVersionLags.length)
+  const dependencyFiltersActive = !!(state.filters.librarySearch.length || selectedScopes(state).length || selectedVersionLags(state).length)
   const byDependencies = dependencyFiltersActive
     ? projectId => projectDependencies(state, projectId).some(isDependencyAllowedByFilters(state))
     : passAlways
@@ -82,8 +84,8 @@ const isDependencyAllowedByFilters = (state) => {
   const byScope = selectedScopes(state).length
     ? scope => selectedScopes(state).includes(scope)
     : passAlways
-  const byVersionLag = state.filters.selectedVersionLags.length
-    ? versionLag => state.filters.selectedVersionLags.includes(versionLag)
+  const byVersionLag = selectedVersionLags(state).length
+    ? versionLag => selectedVersionLags(state).includes(versionLag)
     : passAlways
   return dependency => bySearch(dependency.id) && byScope(dependency.scope) && byVersionLag(dependency.versionLag)
 }
@@ -197,6 +199,12 @@ export function treeLoadMiddleware ({ getState }) {
           ? currentScopes.filter(scope => scope !== action.scope)
           : currentScopes.concat(action.scope)
         return next(updateDependencyScopeFilter(updatedScopes))
+      case 'TOGGLE_VERSION_SCOPE_FILTER':
+        const currentVersionLags = selectedVersionLags(getState())
+        const updatedVersionLags = currentVersionLags.includes(action.scope)
+          ? currentVersionLags.filter(lag => lag !== action.scope)
+          : currentVersionLags.concat(action.scope)
+        return next(updateVersionLagFilter(updatedVersionLags))
     }
     return next(action)
   }
