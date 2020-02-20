@@ -1,11 +1,20 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  overscroll-behavior: none;
+}
+
 .container {
+  display: flex;
+  flex-flow: column;
   font-family: sans-serif;
+  height: 100%;
   margin-left: 1em;
   margin-right: 1em;
 }
 
 .header--xl {
-  margin-top: 0
+  margin: 0.5em 0;
 }
 
 .load-summary {
@@ -53,12 +62,14 @@
 }
 
 .matrix__table-wrapper {
-  width: fit-content;
+  box-sizing: border-box;
+  flex-grow: 1;
+  margin-bottom: 1em;
+  margin-top: 1em;
   max-width: 100%;
   overflow: scroll;
-  max-height: 35em;
-  border: solid 1px gray;
-  margin-top: 1em;
+  padding-right: 1em;
+  width: fit-content;
 }
 
 .matrix__table-cell {
@@ -129,7 +140,7 @@
   position: sticky;
   top: 0;
   left: 0;
-  background: lightgray;
+  background: white;
   border-right: solid 2px gray;
   border-bottom: solid 2px gray;
   z-index: 1;
